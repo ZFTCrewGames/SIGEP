@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGEP - Gestión de Planillas</title>
     
-    <!-- FAVICON (Nuevo) -->
-    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGI5MmY3IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgY2xhc3M9ImZlYXRoZXIgZmVhdGhlci1zaGllbGQiPjxwYXRoIGQ9Ik0xMiAyMmM1LjUyMyAwIDEwLTQuNDc3IDEwLTEwUzE3LjUyMyAyIDEyIDIgMiA2LjQ3NyAyIDEyczQuNDc3IDEwIDEwIDEwek0xMiA2djYiLz48cGF0aCBkPSJNMTIgMThsLTMtMy4wMCIvPjxwYXRoIGQ9Ik0xMiAxOGwzLTMuMDAiLz48cGF0aCBkPSJNMTIgNnY2IiAvPjxwYXRoIGQ9Ik0xMiAxMmwtMyAzLjAwIiAvPjxwYXRoIGQ9Ik0xMiAxMmwzIDMuMDAiIC8+PC9zdmc+">
+    <!-- FAVICON (Escudo/Archivo) -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGI5MmY3IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgY2xhc3M9ImZlYXRoZXIgZmVhdGhlci1zaGllbGQiPjxwYXRoIGQ9Ik0xMiAyMmM1LjUyMyAwIDEwLTQuNDc3IDEwLTEwUzE3LjUyMyAyIDEyIDIgMiA2LjQ3NyAyIDEyczQuNDc3IDEwIDEwIDEwek0xMiA2djYiLz48cGF0aCBkPSJNMTIgMThsLTMtMy4wMCIvPjxwYXRoIGQ9Ik0xMiAxOGwzLTMuMDAiLz48cGF0aCBkPSJNMTIgNnY2IiAvPz48cGF0aCBkPSJNMTIgMTJsNyA3IiAvPz48cGF0aCBkPSJNMTIgMTJsNyA3IiAvPz48L3N2ZyA+">
 
     <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,17 +22,20 @@
             background-color: #111827; /* bg-gray-900 */
         }
         /* Estilos para que los selects se vean consistentes en modo oscuro */
-        select, input[type="date"] {
+        select, input[type="date"], input[type="text"], input[type="number"], input[type="month"] {
+            border-color: #374151; /* slate-600 */
+            background-color: #374151; /* slate-700 */
+            color: #f3f4f6; /* neutral-200 */
+        }
+        select {
             appearance: none;
             background-position: right 0.5rem center;
             background-repeat: no-repeat;
             background-size: 1.5em 1.5em;
             padding-right: 2.5rem;
+            background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20"><path stroke="%239CA3AF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m6 8 4 4 4-4"/></svg>');
         }
-        select {
-             background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20"><path stroke="%239CA3AF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m6 8 4 4 4-4"/></svg>');
-        }
-        input[type="date"] {
+        input[type="date"], input[type="month"] {
             color-scheme: dark;
         }
         input[type="number"]::-webkit-outer-spin-button,
@@ -58,6 +61,41 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Estilo para tachar un elemento pagado */
+        .paid-indicator:before {
+            content: " ";
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: #10B981; /* emerald-500 */
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            opacity: 0.7;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        /* Estilo para campos monetarios de detalle */
+        .detalle-monto-input {
+             font-size: 0.875rem; /* text-sm */
+             padding: 0.5rem 0.75rem; 
+             height: auto;
+             line-height: normal;
+        }
+        /* Estilos para radio buttons */
+        input[type="radio"].text-green-500:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+            background-color: #22c55e; /* green-500 */
+            border-color: #22c55e;
+        }
+         input[type="radio"].text-red-500:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+            background-color: #ef4444; /* red-500 */
+            border-color: #ef4444;
+        }
     </style>
 </head>
 <body class="text-neutral-200">
@@ -127,24 +165,25 @@
                     <form id="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-4 bg-slate-800 rounded-lg shadow-lg">
                         <div>
                             <label for="searchExpediente" class="block text-sm font-medium text-neutral-300">Buscar por Expediente</label>
-                            <input type="text" id="searchExpediente" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white" placeholder="Buscar...">
+                            <input type="text" id="searchExpediente" name="searchExpediente" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white" placeholder="Buscar...">
                         </div>
                         <div>
-                            <label for="filterEstado" class="block text-sm font-medium text-neutral-300">Filtrar por Estado</label>
-                            <select id="filterEstado" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                            <label for="filterEstado" class="block text-sm font-medium text-neutral-300">Filtrar por Estado Remisión</label>
+                            <select id="filterEstado" name="filterEstado" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
                                 <option value="">Todos</option>
                                 <option value="oficina">En Oficina</option>
                                 <option value="presupuesto">En Presupuesto</option>
                                 <option value="secretaria">En Secretaría</option>
+                                <option value="pagado">Pagado</option>
                             </select>
                         </div>
                         <div>
-                            <label for="filterFechaInicio" class="block text-sm font-medium text-neutral-300">Fecha Desde</label>
-                            <input type="date" id="filterFechaInicio" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                            <label for="filterFechaInicio" class="block text-sm font-medium text-neutral-300">Fecha Envío Desde</label>
+                            <input type="date" id="filterFechaInicio" name="filterFechaInicio" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
                         </div>
                         <div>
-                            <label for="filterFechaFin" class="block text-sm font-medium text-neutral-300">Fecha Hasta</label>
-                            <input type="date" id="filterFechaFin" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                            <label for="filterFechaFin" class="block text-sm font-medium text-neutral-300">Fecha Envío Hasta</label>
+                            <input type="date" id="filterFechaFin" name="filterFechaFin" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:focus:border-indigo-500 sm:text-sm text-white">
                         </div>
                         <div class="sm:col-span-2 lg:col-span-4 flex items-center space-x-2">
                             <button type="button" id="filterButton" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-800">
@@ -177,15 +216,29 @@
                 </section>
 
 
-                <!-- VISTA: AGREGAR REGISTRO -->
+                <!-- VISTA: AGREGAR/EDITAR REGISTRO -->
                 <section id="view-agregar" class="view-section">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Agregar Nuevo Registro</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-6" id="form-title">Agregar Nuevo Registro</h2>
                     <div class="bg-slate-800 p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
                         <form id="addForm" class="space-y-6">
-                            
+                            <input type="hidden" id="registroId" name="registroId">
+
+                            <!-- Sección Fechas -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="fechaPlanilla" class="block text-sm font-medium text-neutral-300">Fecha Ref. Planilla (Ej: 2025-08)</label>
+                                    <!-- Input para Mes y Año (YYYY-MM) -->
+                                    <input type="month" id="fechaPlanilla" name="fechaPlanilla" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                                </div>
+                                <div>
+                                    <label for="fechaEnvio" class="block text-sm font-medium text-neutral-300">Fecha de Elaboración (Trabajo)</label>
+                                    <input type="date" id="fechaEnvio" name="fechaEnvio" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                                </div>
+                            </div>
+
                             <!-- Sección Datos Principales -->
                             <div>
-                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-700 pb-2 mb-4">Datos Principales</h3>
+                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-700 pb-2 mb-4">Datos del Documento</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
                                         <label for="tipoDocumento" class="block text-sm font-medium text-neutral-300">Tipo de Documento</label>
@@ -193,7 +246,6 @@
                                             <option value="Planilla">Planilla</option>
                                             <option value="Informe">Informe</option>
                                             <option value="Remisión">Remisión</option>
-                                            <!-- Opción Nueva -->
                                             <option value="Solicitud">Solicitud</option>
                                         </select>
                                     </div>
@@ -202,13 +254,7 @@
                                         <input type="text" id="expediente" name="expediente" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white" placeholder="Ej: 2025-001-A">
                                     </div>
                                     <div>
-                                        <label for="fechaEnvio" class="block text-sm font-medium text-neutral-300">Fecha de Envío (Inicial)</label>
-                                        <input type="date" id="fechaEnvio" name="fechaEnvio" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                                    <div>
-                                        <label for="unidadEjecutora" class="block text-sm font-medium text-neutral-300">Unidad Ejecutora</label>
+                                        <label for="unidadEjecutora" class="block text-sm font-medium text-neutral-300">Unidad Ejecutora Principal</label>
                                         <select id="unidadEjecutora" name="unidadEjecutora" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
                                             <option value="11">11 - Fuerza del Ejército</option>
                                             <option value="12">12 - Fuerza Aérea</option>
@@ -216,10 +262,13 @@
                                             <option value="14">14 - Estado Mayor Conjunto</option>
                                             <option value="15">15 - Hospital Militar</option>
                                             <option value="32">32 - PMOP</option>
-                                            <option value="99">99 - Otra</option>
+                                            <option value="FA">Fuerzas Armadas (FA)</option>
                                         </select>
                                     </div>
-                                    <div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                    <div class="md:col-span-2">
                                         <label for="objetoGasto" class="block text-sm font-medium text-neutral-300">Objeto de Gasto</label>
                                         <select id="objetoGasto" name="objetoGasto" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
                                             <option value="Haberes">Haberes</option>
@@ -231,26 +280,75 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="tipoTropa" class="block text-sm font-medium text-neutral-300">Tipo de Tropa</label>
-                                        <select id="tipoTropa" name="tipoTropa" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
-                                            <option value="Tropa Activa">Tropa Activa</option>
-                                            <option value="Tropa Baja">Tropa Baja</option>
-                                            <option value="N/A">N/A</option>
-                                        </select>
-                                    </div>
-                                    <div>
                                         <label for="tipoPlanilla" class="block text-sm font-medium text-neutral-300">Tipo de Planilla</label>
                                         <select id="tipoPlanilla" name="tipoPlanilla" required class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
-                                            <option value="Ordinaria">Ordinaria</option>
+                                            <option value="Ordinaria">Ordinaria</nd>
                                             <option value="Complementaria">Complementaria</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Sección Seguimiento -->
+                            <!-- Sección Unidades Ejecutoras Adicionales (Condicional FA) -->
+                            <div id="faCategoriesSection" class="hidden">
+                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-700 pb-2 mb-4">UEs Incluidas en Documento (FA)</h3>
+                                <p class="text-sm text-neutral-400 mb-3">Selecciona las Unidades Ejecutoras específicas que abarca este documento (Opcional):</p>
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-slate-700 rounded-md">
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="11" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>11 - Ejército</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="12" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>12 - Aérea</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="13" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>13 - Naval</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="14" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>14 - E.M.C.</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="15" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>15 - H. Militar</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="32" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>32 - PMOP</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Sección Estado del Personal (Múltiple) -->
                             <div>
-                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-700 pb-2 mb-4">Seguimiento (Opcional)</h3>
+                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-700 pb-2 mb-4">Estado del Personal</h3>
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-slate-700 rounded-md">
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="personalState" value="Activa" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>Activa</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="personalState" value="Baja" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>Baja</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="personalState" value="Cambio de Categoría" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>Cambio de Categoría</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Sección Observaciones -->
+                            <div>
+                                <label for="observacionesPersonal" class="block text-sm font-medium text-neutral-300">Observaciones</label>
+                                <textarea id="observacionesPersonal" name="observacionesPersonal" rows="3" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white" placeholder="Notas sobre el documento."></textarea>
+                            </div>
+
+                            <!-- Sección Seguimiento de Remisiones -->
+                            <div>
+                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-700 pb-2 mb-4">Seguimiento (Presupuesto / Secretaría)</h3>
                                 <div class="space-y-4">
                                     <!-- Presupuesto -->
                                     <div class="bg-slate-700/50 p-4 rounded-lg">
@@ -289,34 +387,66 @@
                                 </div>
                             </div>
                             
-                            <!-- Sección Valores Monetarios -->
-                            <div>
-                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-700 pb-2 mb-4">Valores Monetarios (Opcional)</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label for="valorTotal" class="block text-sm font-medium text-neutral-300">Valor Total de Planilla</label>
-                                        <input type="number" id="valorTotal" name="valorTotal" step="0.01" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white" placeholder="0.00">
-                                    </div>
-                                    <div>
-                                        <label for="valorDeducciones" class="block text-sm font-medium text-neutral-300">Deducciones</Glabel>
-                                        <input type="number" id="valorDeducciones" name="valorDeducciones" step="0.01" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white" placeholder="0.00">
-                                    </div>
-                                    <div>
-                                        <label for="valorNeto" class="block text-sm font-medium text-neutral-300">Neto a Pagar</label>
-                                        <input type="text" id="valorNeto" name="valorNeto" readonly class="mt-1 block w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-md shadow-sm sm:text-sm text-green-400 font-bold" placeholder="0.00">
-                                    </div>
+                            <!-- Sección CONTROL MONETARIO DETALLADO POR UE -->
+                            <div class="bg-slate-700 p-6 rounded-lg shadow-inner">
+                                <h3 class="text-lg font-medium text-green-400 border-b border-slate-600 pb-2 mb-4">Control Monetario Detallado (Por UE)</h3>
+                                
+                                <div id="detalleMonetarioContainer" class="space-y-4">
+                                    <!-- Las líneas de detalle se insertarán aquí -->
+                                </div>
+                                
+                                <button type="button" id="addDetalleBtn" class="mt-4 w-full inline-flex justify-center py-2 px-4 border border-indigo-600 text-sm font-medium rounded-md text-indigo-300 bg-slate-800 hover:bg-slate-700">
+                                    <i data-feather="plus" class="w-5 h-5 mr-2"></i>
+                                    Agregar Detalle Monetario
+                                </button>
+                                
+                                <div class="mt-6 pt-4 border-t border-slate-600 flex justify-between items-center">
+                                    <span class="text-lg font-bold text-white">TOTAL GENERAL NETO:</span>
+                                    <span id="totalNetoDisplay" class="text-2xl font-extrabold text-green-400">L. 0.00</span>
                                 </div>
                             </div>
-                            
+
+                            <!-- Sección Control de Pago (Global) -->
+                            <div class="pt-4 flex flex-col justify-center space-y-2 p-3 bg-slate-700 rounded-md">
+                                <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-600 pb-2 mb-2">Control de Pago Global</h3>
+                                <!-- CAMBIO: Reemplazado checkbox por dos radios -->
+                                <div class="flex items-center space-x-6 py-2">
+                                    <label for="radioPagado" class="flex items-center space-x-2 text-sm font-medium text-white">
+                                        <input type="radio" id="radioPagado" name="estadoPago" value="pagado" class="h-4 w-4 text-green-500 border-slate-500 focus:ring-green-500">
+                                        <span>Pagado</span>
+                                    </label>
+                                    <label for="radioNoPagado" class="flex items-center space-x-2 text-sm font-medium text-white">
+                                        <input type="radio" id="radioNoPagado" name="estadoPago" value="noPagado" class="h-4 w-4 text-red-500 border-slate-500 focus:ring-red-500" checked>
+                                        <span>No Pagado</span>
+                                    </label>
+                                </div>
+                            </div>
+
+
                             <!-- Botón de Enviar -->
                             <div class="pt-4">
                                 <button type="submit" class="w-full inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-800">
-                                    Guardar Registro
+                                    <span id="submit-button-text">Guardar Registro</span>
+                                </button>
+                                <button type="button" id="cancelEditButton" class="w-full mt-2 inline-flex justify-center py-3 px-6 border border-slate-600 shadow-sm text-base font-medium rounded-md text-neutral-200 bg-slate-700 hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-800 hidden">
+                                    Cancelar Edición
                                 </button>
                             </div>
                         </form>
                     </div>
                 </section>
+                
+                <!-- Modal de Confirmación (Custom) -->
+                <div id="customModal" class="fixed inset-0 bg-black bg-opacity-75 items-center justify-center z-50 hidden">
+                    <div class="bg-slate-800 rounded-lg shadow-xl p-6 w-full max-w-sm border border-slate-700">
+                        <h3 class="text-lg font-medium text-white" id="modal-title"></h3>
+                        <p class="mt-2 text-sm text-neutral-400" id="modal-message"></p>
+                        <div class="mt-4 flex justify-end space-x-3">
+                            <button id="modal-cancel" class="py-2 px-4 border border-slate-600 rounded-md shadow-sm text-sm font-medium text-neutral-200 bg-slate-700 hover:bg-slate-600">Cancelar</button>
+                            <button id="modal-confirm" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
 
             </main>
         </div>
@@ -337,6 +467,7 @@
             getFirestore, 
             doc, 
             addDoc, 
+            updateDoc, 
             deleteDoc, 
             collection, 
             onSnapshot, 
@@ -345,7 +476,7 @@
             setLogLevel
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Configuración de Firebase ---
+        // --- Configuración de Firebase (proporcionada por el usuario) ---
         const firebaseConfig = {
             apiKey: "AIzaSyA9l_RrRwP8gvmrvhEBpAV0aV4v9sMG-UA",
             authDomain: "sigep-planillas.firebaseapp.com",
@@ -361,11 +492,11 @@
         let unsubscribe;
 
         // --- Mapas y Constantes ---
-        const ueMap = {
+        const ueOptions = {
             "11": "11 - Fuerza del Ejército", "12": "12 - Fuerza Aérea",
             "13": "13 - Fuerza Naval", "14": "14 - Estado Mayor Conjunto",
             "15": "15 - Hospital Militar", "32": "32 - PMOP",
-            "99": "99 - Otra"
+            "FA": "Fuerzas Armadas (FA)"
         };
         const monthNames = [
             "01-Enero", "02-Febrero", "03-Marzo", "04-Abril", "05-Mayo", "06-Junio",
@@ -373,139 +504,236 @@
         ];
 
         // --- Selectores del DOM ---
-        const loginScreen = document.getElementById('login-screen');
         const loginButton = document.getElementById('login-button');
-        const loginError = document.getElementById('login-error');
-        const mainApp = document.getElementById('main-app');
         const logoutButton = document.getElementById('logout-button');
-        const userPhoto = document.getElementById('user-photo');
-        const userName = document.getElementById('user-name');
-        const userEmail = document.getElementById('user-email');
         const navLinks = document.querySelectorAll('.nav-link');
         const viewSections = document.querySelectorAll('.view-section');
         const addForm = document.getElementById('addForm');
-        const loading = document.getElementById('loading');
+        const formTitle = document.getElementById('form-title');
+        const submitButtonText = document.getElementById('submit-button-text');
+        const cancelEditButton = document.getElementById('cancelEditButton');
+        const registroIdInput = document.getElementById('registroId');
+        
         const planillasContainer = document.getElementById('planillasContainer');
         const archiveContainer = document.getElementById('archiveContainer');
-        const noResults = document.getElementById('noResults');
-        const filterForm = document.getElementById('filterForm');
-        const searchExpediente = document.getElementById('searchExpediente');
-        const filterEstado = document.getElementById('filterEstado');
-        const filterFechaInicio = document.getElementById('filterFechaInicio');
-        const filterFechaFin = document.getElementById('filterFechaFin');
-        const filterButton = document.getElementById('filterButton');
-        const clearFilterButton = document.getElementById('clearFilterButton');
-
-        // Formulario "Agregar"
+        
+        // Formulario "Agregar" campos específicos
+        const unidadEjecutoraSelect = document.getElementById('unidadEjecutora');
+        const faCategoriesSection = document.getElementById('faCategoriesSection');
+        const faUeIncludesInputs = faCategoriesSection.querySelectorAll('input[name="faUeIncludes"]');
+        const personalStateInputs = document.querySelectorAll('input[name="personalState"]');
+        
         const checkPresupuesto = document.getElementById('checkPresupuesto');
         const fieldsPresupuesto = document.getElementById('fieldsPresupuesto');
         const checkSecretaria = document.getElementById('checkSecretaria');
         const fieldsSecretaria = document.getElementById('fieldsSecretaria');
-        const valorTotal = document.getElementById('valorTotal');
-        const valorDeducciones = document.getElementById('valorDeducciones');
-        const valorNeto = document.getElementById('valorNeto');
-
-        // --- Funciones Principales ---
-
-        /**
-         * Inicializa Firebase y configura los listeners de autenticación.
-         */
-        function initializeFirebase() {
-            try {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                provider = new GoogleAuthProvider();
-                setLogLevel('Debug');
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) handleLoginSuccess(user);
-                    else handleLogoutSuccess();
-                });
-            } catch (error) {
-                console.error("Error al inicializar Firebase:", error);
-                loginError.textContent = "Error al conectar con Firebase.";
-            }
-        }
+        
+        // Control Monetario Dinámico
+        const detalleMonetarioContainer = document.getElementById('detalleMonetarioContainer');
+        const addDetalleBtn = document.getElementById('addDetalleBtn');
+        const totalNetoDisplay = document.getElementById('totalNetoDisplay');
+        
+        // --- Funciones de Utilidad ---
 
         /**
-         * Maneja el éxito del inicio de sesión.
-         */
-        function handleLoginSuccess(user) {
-            userId = user.uid;
-            userPhoto.src = user.photoURL || 'https://placehold.co/40x40/606060/FFFFFF?text=?';
-            userName.textContent = user.displayName || 'Usuario';
-            userEmail.textContent = user.email;
-            collectionPath = `planillas/${userId}/registros`;
-            
-            mainApp.classList.remove('hidden');
-            loginScreen.classList.add('hidden');
-            loginError.textContent = '';
-            
-            setupSnapshotListener();
-        }
-
-        /**
-         * Maneja el cierre de sesión.
-         */
-        function handleLogoutSuccess() {
-            userId = null;
-            collectionPath = null;
-            if (unsubscribe) unsubscribe();
-            allPlanillas = [];
-            planillasContainer.innerHTML = '';
-            
-            mainApp.classList.add('hidden');
-            loginScreen.classList.remove('hidden');
-            userPhoto.src = 'https://placehold.co/40x40/606060/FFFFFF?text=?';
-            userName.textContent = '...';
-            userEmail.textContent = '...';
-        }
-
-        /**
-         * Inicia el pop-up de inicio de sesión con Google.
-         */
-        async function handleLogin() {
-            try {
-                loginError.textContent = '';
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Error al iniciar sesión:", error);
-                loginError.textContent = "Error al iniciar sesión. Intenta de nuevo.";
-            }
-        }
-
-        /**
-         * Cierra la sesión del usuario.
-         */
-        async function handleLogout() {
-            try { await signOut(auth); } 
-            catch (error) { console.error("Error al cerrar sesión:", error); }
-        }
-
-        /**
-         * Maneja la navegación entre vistas.
+         * Maneja la navegación de la barra lateral.
          */
         function handleNavClick(e) {
             e.preventDefault();
             const targetView = e.currentTarget.dataset.view;
-
-            viewSections.forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
             document.getElementById(targetView).classList.add('active');
-
-            navLinks.forEach(link => {
+            document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('bg-indigo-600', 'text-white');
                 link.classList.add('text-neutral-300', 'hover:bg-slate-700', 'hover:text-white');
             });
             e.currentTarget.classList.add('bg-indigo-600', 'text-white');
             e.currentTarget.classList.remove('text-neutral-300', 'hover:bg-slate-700', 'hover:text-white');
-            
-            // Si se hace clic en Archivo, renderizarlo
-            if (targetView === 'view-archive') {
-                renderArchiveView();
-            }
+            if (targetView === 'view-agregar') resetForm();
             feather.replace();
         }
+
+        /**
+         * Muestra/oculta campos de seguimiento.
+         */
+        function toggleFields(fieldsDiv, isChecked) {
+            if (isChecked) fieldsDiv.classList.remove('hidden');
+            else fieldsDiv.classList.add('hidden');
+        }
+
+        /**
+         * Determina el estado de remisión del documento.
+         */
+        function getEstado(p) {
+            if (p.checkPagado) return 'pagado';
+            if (p.fechaEnvioSecretaria) return 'secretaria';
+            if (p.fechaEnvioPresupuesto) return 'presupuesto';
+            return 'oficina';
+        }
+
+        /**
+         * Formatea un valor numérico a moneda con separador de miles.
+         * @param {number|string} value - El número a formatear.
+         */
+        function formatNumber(value) {
+            const num = parseFloat(String(value).replace(/,/g, ''));
+            if (isNaN(num)) return '0.00'; // Devolver '0.00' si no es un número
+            return num.toLocaleString('en-US', { // Usar 'en-US' para comas como miles y punto decimal
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        
+        /**
+         * Quita el formato de un número (comas).
+         * @param {string} value - El número formateado.
+         */
+        function unformatNumber(value) {
+            return String(value).replace(/,/g, '');
+        }
+
+        /**
+         * Formatea a moneda para la visualización en tarjeta.
+         */
+        function formatMoney(value) {
+            return `L. ${formatNumber(value)}`;
+        }
+        
+        // --- Control Monetario Dinámico ---
+        
+        /**
+         * Calcula el total general neto de todos los detalles monetarios.
+         */
+        function updateTotalNeto() {
+            let totalNeto = 0;
+            const detailLines = detalleMonetarioContainer.querySelectorAll('.detalle-linea');
+            
+            detailLines.forEach(line => {
+                const netoInput = line.querySelector('.input-neto');
+                const netoValue = parseFloat(unformatNumber(netoInput.value)) || 0;
+                totalNeto += netoValue;
+            });
+            
+            totalNetoDisplay.textContent = formatMoney(totalNeto);
+        }
+
+        /**
+         * Calcula el neto de una línea de detalle.
+         */
+        function calculateDetalleNeto(line) {
+            const totalInput = line.querySelector('.input-total');
+            const deduccionesInput = line.querySelector('.input-deducciones');
+            const netoInput = line.querySelector('.input-neto');
+            
+            // Reemplazar comas para parsear a número
+            const total = parseFloat(unformatNumber(totalInput.value)) || 0;
+            const deducciones = parseFloat(unformatNumber(deduccionesInput.value)) || 0;
+            const neto = total - deducciones;
+            
+            // Aplicar formato al Neto y actualizar
+            netoInput.value = formatNumber(neto);
+            
+            updateTotalNeto();
+        }
+
+        /**
+         * Evento para aplicar formato al perder el foco (blur)
+         */
+        function handleMoneyInputBlur(e) {
+            e.target.value = formatNumber(e.target.value); // Formatear al salir
+            
+            // Recalcular neto si cambia Total o Deducciones
+            const line = e.target.closest('.detalle-linea');
+            if (line) calculateDetalleNeto(line);
+        }
+        
+        /**
+         * Evento para quitar formato al ganar el foco (focus)
+         */
+        function handleMoneyInputFocus(e) {
+             e.target.value = unformatNumber(e.target.value); // Quitar formato al entrar
+        }
+
+
+        /**
+         * Crea una nueva línea de detalle monetario.
+         * @param {object} detailData - Datos opcionales para inicializar la línea (en modo edición).
+         */
+        function createDetalleMonetarioLine(detailData = {}) {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'detalle-linea grid grid-cols-1 md:grid-cols-7 gap-2 p-3 bg-slate-800 rounded-md border border-slate-700 items-end';
+            
+            // Valores iniciales (sin formato para 'value', formateado para 'display' si es readonly)
+            const totalInitial = detailData.total || '';
+            const deduccionesInitial = detailData.deducciones || '';
+            const netoFormatted = detailData.neto ? formatNumber(detailData.neto) : '0.00';
+
+            lineDiv.innerHTML = `
+                <!-- UE -->
+                <div class="col-span-2">
+                    <label class="block text-xs font-medium text-neutral-400 mb-1">UE Detalle</label>
+                    <select name="detalleUE" class="input-ue block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-sm text-white detalle-monto-input">
+                        ${Object.keys(ueOptions).map(key => `<option value="${key}" ${key === detailData.ue ? 'selected' : ''}>${ueOptions[key]}</option>`).join('')}
+                    </select>
+                </div>
+                <!-- Efectivos -->
+                <div>
+                    <label class="block text-xs font-medium text-neutral-400 mb-1">Efectivos</label>
+                    <input type="number" step="1" value="${detailData.efectivos || ''}" class="input-efectivos block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-white detalle-monto-input" placeholder="0">
+                </div>
+                <!-- Total -->
+                <div>
+                    <label class="block text-xs font-medium text-neutral-400 mb-1">Total</label>
+                    <input type="text" value="${totalInitial}" class="input-total block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-white detalle-monto-input" placeholder="0.00">
+                </div>
+                <!-- Deducciones -->
+                <div>
+                    <label class="block text-xs font-medium text-neutral-400 mb-1">Deducc.</label>
+                    <input type="text" value="${deduccionesInitial}" class="input-deducciones block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-white detalle-monto-input" placeholder="0.00">
+                </div>
+                <!-- Neto -->
+                <div>
+                    <label class="block text-xs font-medium text-neutral-400 mb-1">Neto</label>
+                    <input type="text" value="${netoFormatted}" readonly class="input-neto block w-full bg-slate-900 border border-slate-600 rounded-md shadow-sm text-green-400 font-bold detalle-monto-input" placeholder="0.00">
+                </div>
+                <!-- Acción -->
+                <div class="flex items-center justify-center">
+                    <button type="button" class="remove-detalle-btn text-red-500 hover:text-red-400 p-1 rounded-full hover:bg-slate-700" title="Eliminar Detalle">
+                        <i data-feather="x-circle" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Asignar eventos a los inputs recién creados
+            const inputsToListen = lineDiv.querySelectorAll('.input-total, .input-deducciones');
+            inputsToListen.forEach(input => {
+                input.addEventListener('blur', handleMoneyInputBlur); // Formatear al salir
+                input.addEventListener('focus', handleMoneyInputFocus); // Quitar formato al entrar
+                input.addEventListener('input', () => { // Recalcular en cada tecla
+                    const line = input.closest('.detalle-linea');
+                    if (line) calculateDetalleNeto(line);
+                });
+            });
+            
+            // Formatear los campos al crearlos si tienen datos (modo edición)
+            if (detailData.total) lineDiv.querySelector('.input-total').value = formatNumber(detailData.total);
+            if (detailData.deducciones) lineDiv.querySelector('.input-deducciones').value = formatNumber(detailData.deducciones);
+
+            lineDiv.querySelector('.remove-detalle-btn').addEventListener('click', () => {
+                detalleMonetarioContainer.removeChild(lineDiv);
+                updateTotalNeto();
+            });
+
+            detalleMonetarioContainer.appendChild(lineDiv);
+            feather.replace();
+            
+            // Calcular neto inicial si vienen datos
+            if (detailData.total || detailData.deducciones) {
+                calculateDetalleNeto(lineDiv);
+            }
+        }
+        
+        // --- Funciones de CRUD y Renderizado ---
 
         /**
          * Configura el listener de onSnapshot para obtener datos en tiempo real.
@@ -513,11 +741,7 @@
         function setupSnapshotListener() {
             if (!userId) return; 
             if (unsubscribe) unsubscribe();
-
-            loading.classList.remove('hidden');
-            planillasContainer.classList.add('hidden');
-            noResults.classList.add('hidden');
-            archiveContainer.innerHTML = ''; // Limpiar archivo
+            document.getElementById('loading').classList.remove('hidden');
 
             const q = query(collection(db, collectionPath));
             
@@ -527,66 +751,59 @@
                     allPlanillas.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Ordenar por fecha de envío inicial (la principal)
+                // Ordenar por fecha de envío (Trabajo) descendente
                 allPlanillas.sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
                 
-                console.log(`Datos recibidos: ${allPlanillas.length} registros.`);
-                renderPlanillas(); // Renderiza el dashboard por defecto
-                
-                // Pre-renderizar el archivo en segundo plano
+                renderPlanillas();
                 renderArchiveView();
                 
-                loading.classList.add('hidden');
-
+                document.getElementById('loading').classList.add('hidden');
             }, (error) => {
                 console.error("Error al obtener datos:", error);
-                loading.textContent = "Error al cargar los datos.";
+                document.getElementById('loading').textContent = "Error al cargar los datos.";
             });
         }
 
         /**
-         * Renderiza las tarjetas en el Dashboard aplicando filtros.
+         * Renderiza la vista principal aplicando filtros.
          */
         function renderPlanillas() {
             planillasContainer.innerHTML = '';
+            const filterForm = document.getElementById('filterForm');
+            const formData = new FormData(filterForm);
 
-            const searchExp = searchExpediente.value.toLowerCase().trim();
-            const filterEst = filterEstado.value;
-            const filterStart = filterFechaInicio.value;
-            const filterEnd = filterFechaFin.value;
+            const searchExp = formData.get('searchExpediente')?.toLowerCase().trim() || '';
+            const filterEst = formData.get('filterEstado') || '';
+            const filterStart = formData.get('filterFechaInicio') || '';
+            const filterEnd = formData.get('filterFechaFin') || '';
 
             const filteredPlanillas = allPlanillas.filter(p => {
-                const pDate = p.fechaEnvio; // Fecha inicial
+                const pDate = p.fechaEnvio;
                 
-                // 1. Filtro por N° Expediente (busca en todos los campos de expediente)
-                const expPrincipal = p.expediente ? p.expediente.toLowerCase() : '';
-                const expPresupuesto = p.expedientePresupuesto ? p.expedientePresupuesto.toLowerCase() : '';
-                const expSecretaria = p.expedienteSecretaria ? p.expedienteSecretaria.toLowerCase() : '';
+                // Buscar en cualquier campo de expediente
+                const expMatches = searchExp && (
+                    p.expediente?.toLowerCase().includes(searchExp) ||
+                    p.expedientePresupuesto?.toLowerCase().includes(searchExp) ||
+                    p.expedienteSecretaria?.toLowerCase().includes(searchExp)
+                );
+                if (searchExp && !expMatches) return false;
                 
-                if (searchExp && !expPrincipal.includes(searchExp) && !expPresupuesto.includes(searchExp) && !expSecretaria.includes(searchExp)) {
-                    return false;
-                }
-                
-                // 2. Filtro por Estado
+                // Filtrar por Estado Remisión
                 const estado = getEstado(p);
-                if (filterEst && estado !== filterEst) {
-                    return false;
-                }
+                if (filterEst && estado !== filterEst) return false;
                 
-                // 3. Filtro por Fecha de Inicio (sobre la fecha de envío inicial)
+                // Filtro de Fechas de Envío (Trabajo)
                 if (filterStart && pDate < filterStart) return false;
-                
-                // 4. Filtro por Fecha de Fin
                 if (filterEnd && pDate > filterEnd) return false;
                 
                 return true;
             });
 
             if (filteredPlanillas.length === 0) {
-                noResults.classList.remove('hidden');
+                document.getElementById('noResults').classList.remove('hidden');
                 planillasContainer.classList.add('hidden');
             } else {
-                noResults.classList.add('hidden');
+                document.getElementById('noResults').classList.add('hidden');
                 planillasContainer.classList.remove('hidden');
                 filteredPlanillas.forEach(p => renderPlanillaCard(p, planillasContainer));
             }
@@ -595,37 +812,107 @@
         }
 
         /**
-         * Crea y añade una tarjeta <div> al contenedor.
+         * Crea la tarjeta visual para un registro.
          */
         function renderPlanillaCard(planilla, container) {
             const card = document.createElement('div');
-            card.className = "bg-slate-800 shadow-lg rounded-lg overflow-hidden relative border border-slate-700";
+            const isPaid = planilla.checkPagado;
+            card.className = `bg-slate-800 shadow-lg rounded-lg overflow-hidden relative border border-slate-700 ${isPaid ? 'paid-indicator' : ''}`;
+            card.setAttribute('data-id', planilla.id);
             
-            const ueNombre = ueMap[planilla.unidadEjecutora] || "N/A";
+            const ueNombre = ueOptions[planilla.unidadEjecutora] || "N/A";
             const estado = getEstado(planilla);
             
             let estadoBadge = '';
-            if (estado === 'secretaria') estadoBadge = '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-900/50 text-green-300">En Secretaría</span>';
+            if (estado === 'pagado') estadoBadge = '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-700 text-white"><i data-feather="dollar-sign" class="w-4 h-4 inline-block -mt-0.5"></i> Pagado</span>';
+            else if (estado === 'secretaria') estadoBadge = '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-900/50 text-green-300">En Secretaría</span>';
             else if (estado === 'presupuesto') estadoBadge = '<span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-900/50 text-blue-300">En Presupuesto</span>';
             else estadoBadge = '<span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-900/50 text-yellow-300">En Oficina</span>';
 
             const tipoDocBadge = `<span class="px-2 py-1 text-xs font-medium rounded-full bg-indigo-900/50 text-indigo-300">${planilla.tipoDocumento || 'Planilla'}</span>`;
             
+            // Cálculo del Total General Neto desde los detalles
+            let totalGeneralNeto = 0;
+            if (planilla.detalleMonetario && planilla.detalleMonetario.length > 0) {
+                planilla.detalleMonetario.forEach(d => {
+                    totalGeneralNeto += parseFloat(d.neto) || 0;
+                });
+            }
+
             // Sección de Valores Monetarios
             let valoresHTML = '';
-            const total = parseFloat(planilla.valorTotal);
-            const neto = parseFloat(planilla.valorNeto);
-            if (!isNaN(total) && total > 0) {
-                valoresHTML = `
-                    <div class="mt-4 pt-4 border-t border-slate-700">
-                        <span class="text-sm text-neutral-400">Total: <strong class="text-white">L. ${total.toFixed(2)}</strong></span>
-                        <span class="text-sm text-neutral-400 ml-4">Deduc: <strong class="text-red-400">L. ${(total - neto).toFixed(2)}</strong></span>
-                        <span class="text-sm text-neutral-400 ml-4">Neto: <strong class="text-green-400">L. ${neto.toFixed(2)}</strong></span>
+            if (totalGeneralNeto > 0) {
+                 valoresHTML = `
+                    <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between items-center">
+                        <span class="text-sm text-neutral-400">Total Neto Documento:</span>
+                        <strong class="text-xl text-green-400">${formatMoney(totalGeneralNeto)}</strong>
                     </div>
                 `;
             }
 
-            // Sección de Seguimiento
+            // Estado del Personal (Múltiple)
+            let estadoPersonalHTML = '';
+            if (planilla.personalState && planilla.personalState.length > 0) {
+                const badges = planilla.personalState.map(s => {
+                    let color = 'bg-neutral-600/50 text-neutral-300';
+                    if (s === 'Baja') color = 'bg-red-900/50 text-red-300';
+                    else if (s === 'Cambio de Categoría') color = 'bg-yellow-900/50 text-yellow-300';
+                    else if (s === 'Activa') color = 'bg-blue-900/50 text-blue-300';
+                    return `<span class="px-1 text-xs rounded ${color}">${s}</span>`;
+                }).join('');
+                
+                estadoPersonalHTML = `
+                    <div class="mt-3 pt-3 border-t border-slate-700">
+                        <h4 class="text-xs font-semibold text-neutral-400 uppercase mb-1">Estado P.</h4>
+                        <div class="flex flex-wrap gap-2">${badges}</div>
+                    </div>
+                `;
+            }
+            
+            // UEs Incluidas (si aplica y hay más de una) - Corregido sin línea verde
+            let faIncludesHTML = '';
+            if (planilla.unidadEjecutora === 'FA' && planilla.faUeIncludes?.length) {
+                // Obtener nombres cortos de UE (Ej: "Ejército", "Aérea")
+                const includedUEs = planilla.faUeIncludes.map(ue => ueOptions[ue].split(' - ')[1] || ue).join(', ');
+                faIncludesHTML = `
+                    <div class="mt-3 pt-3 border-t border-slate-700">
+                        <h4 class="text-xs font-semibold text-neutral-400 uppercase mb-1">UEs INCLUIDAS</h4>
+                        <p class="text-xs text-indigo-400 italic">${includedUEs}</p>
+                    </div>
+                `;
+            }
+
+            // Observaciones
+            let observacionesHTML = '';
+            if (planilla.observacionesPersonal) {
+                observacionesHTML = `
+                    <div class="mt-3 pt-3 border-t border-slate-700">
+                        <h4 class="text-xs font-semibold text-neutral-400 uppercase mb-1">Obs.</h4>
+                        <p class="text-xs text-neutral-400 italic">${planilla.observacionesPersonal.substring(0, 100)}${planilla.observacionesPersonal.length > 100 ? '...' : ''}</p>
+                    </div>
+                `;
+            }
+
+            // Detalle Monetario
+            let detalleMonetarioHTML = '';
+            if (planilla.detalleMonetario && planilla.detalleMonetario.length > 0) {
+                const detalleRows = planilla.detalleMonetario.map(d => {
+                    const ueName = ueOptions[d.ue] || d.ue;
+                    const efectivos = d.efectivos ? ` (${d.efectivos} pers)` : '';
+                    return `<div class="flex justify-between text-xs text-neutral-400 border-b border-slate-800 py-1"><span>${ueName.split(' - ')[0]} ${efectivos}</span><span class="text-white">${formatMoney(d.neto)}</span></div>`;
+                }).join('');
+
+                detalleMonetarioHTML = `
+                    <div class="mt-3 pt-3 border-t border-slate-700">
+                        <h4 class="text-xs font-semibold text-neutral-400 uppercase mb-1">DETALLE (Neto por UE)</h4>
+                        <div class="max-h-24 overflow-y-auto pr-2">
+                             ${detalleRows}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Seguimiento
             let seguimientoHTML = '';
             if (planilla.fechaEnvioPresupuesto) {
                 seguimientoHTML += `
@@ -650,7 +937,8 @@
                     <div class="flex justify-between items-start mb-3">
                         <div>
                             <h3 class="text-lg font-semibold text-white">${planilla.expediente}</h3>
-                            <p class="text-sm text-neutral-400">Envío inicial: ${planilla.fechaEnvio}</p>
+                            <!-- Corregido a Ref. Planilla y muestra solo YYYY-MM -->
+                            <p class="text-sm text-neutral-400">Ref. Planilla: <strong class="text-white">${planilla.fechaPlanilla || 'N/A'}</strong></p>
                         </div>
                         <div class="flex flex-col items-end space-y-2">
                             ${tipoDocBadge}
@@ -659,14 +947,14 @@
                     </div>
                     
                     <!-- Cuerpo de la tarjeta -->
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mt-4">
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mt-4 pb-2 border-b border-slate-700">
                         <div class="flex items-center space-x-2">
-                            <i data-feather="briefcase" class="w-4 h-4 text-neutral-500"></i>
-                            <span class="text-neutral-400">UE: <strong class="text-white" title="${ueNombre}">${ueNombre}</strong></span>
+                            <i data-feather="map-pin" class="w-4 h-4 text-neutral-500"></i>
+                            <span class="text-neutral-400">UE Principal: <strong class="text-white" title="${ueNombre}">${ueNombre}</strong></span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <i data-feather="users" class="w-4 h-4 text-neutral-500"></i>
-                            <span class="text-neutral-400">Tropa: <strong class="text-white">${planilla.tipoTropa}</strong></span>
+                            <i data-feather="calendar" class="w-4 h-4 text-neutral-500"></i>
+                            <span class="text-neutral-400">Elaboración: <strong class="text-white">${planilla.fechaEnvio}</strong></span>
                         </div>
                         <div class="flex items-center space-x-2">
                             <i data-feather="package" class="w-4 h-4 text-neutral-500"></i>
@@ -676,37 +964,49 @@
                             <i data-feather="layers" class="w-4 h-4 text-neutral-500"></i>
                             <span class="text-neutral-400">Planilla: <strong class="text-white">${planilla.tipoPlanilla}</strong></span>
                         </div>
+                        <!-- "Deducción Global" eliminada de la vista -->
                     </div>
+
+                    <!-- Estado Personal y UEs Incluidas -->
+                    ${estadoPersonalHTML}
+                    ${faIncludesHTML}
+
+                    <!-- Detalle Monetario y Total Neto -->
+                    ${detalleMonetarioHTML}
+                    ${valoresHTML}
+                    
+                    ${observacionesHTML}
 
                     <!-- Seguimiento -->
                     <div class="mt-4 pt-4 border-t border-slate-700">
-                        <h4 class="text-xs font-semibold text-neutral-400 uppercase mb-2">Seguimiento</h4>
+                        <h4 class="text-xs font-semibold text-neutral-400 uppercase mb-2">Historial de Remisiones</h4>
                         <ul class="space-y-2">
                             ${seguimientoHTML}
                         </ul>
                     </div>
-                    
-                    <!-- Valores -->
-                    ${valoresHTML}
-
                 </div>
-                <button class="delete-btn absolute top-3 right-3 text-red-500 hover:text-red-400 p-1 rounded-full hover:bg-slate-700" data-id="${planilla.id}" title="Eliminar">
-                    <i data-feather="trash-2" class="w-4 h-4"></i>
-                </button>
+                <div class="absolute top-3 right-3 flex space-x-2">
+                    <button class="edit-btn text-indigo-400 hover:text-indigo-300 p-1 rounded-full hover:bg-slate-700" data-id="${planilla.id}" title="Editar Registro">
+                        <i data-feather="edit-3" class="w-4 h-4"></i>
+                    </button>
+                    <button class="delete-btn text-red-500 hover:text-red-400 p-1 rounded-full hover:bg-slate-700" data-id="${planilla.id}" title="Eliminar">
+                        <i data-feather="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
             `;
             container.appendChild(card);
         }
-
+        
         /**
-         * Renderiza la vista de Archivo (agrupado por fecha).
+         * Renderiza la vista de archivo por año y mes.
          */
         function renderArchiveView() {
             archiveContainer.innerHTML = '';
             
-            // 1. Agrupar planillas
             const grouped = allPlanillas.reduce((acc, p) => {
                 try {
-                    const date = new Date(p.fechaEnvio + 'T00:00:00'); // Asegurar zona horaria local
+                    // Usamos la fecha de envío (trabajo) para el archivo
+                    const date = new Date(p.fechaEnvio + 'T00:00:00'); 
                     if (isNaN(date)) throw new Error("Invalid date");
                     const year = date.getUTCFullYear().toString();
                     const month = monthNames[date.getUTCMonth()];
@@ -720,8 +1020,7 @@
                 return acc;
             }, {});
 
-            // 2. Renderizar HTML
-            const sortedYears = Object.keys(grouped).sort().reverse(); // Años más nuevos primero
+            const sortedYears = Object.keys(grouped).sort().reverse(); 
 
             if (sortedYears.length === 0) {
                 archiveContainer.innerHTML = `<p class="text-center text-neutral-500 py-10">No hay registros para archivar.</p>`;
@@ -733,14 +1032,15 @@
                 yearDiv.className = 'year-group';
                 
                 let yearHTML = `<h3 class="text-2xl font-semibold text-white mb-6 border-b border-slate-700 pb-3">${year}</h3>`;
-                const sortedMonths = Object.keys(grouped[year]).sort(); // Meses en orden (Ene, Feb...)
+                // Ordenar meses numéricamente
+                const sortedMonths = Object.keys(grouped[year]).sort(); 
                 
                 let monthsHTML = '<div class="month-group space-y-8">';
                 for (const month of sortedMonths) {
-                    const monthKey = month.substring(3); // "Enero", "Febrero", etc.
+                    const monthName = month.substring(3); // Solo el nombre del mes
                     monthsHTML += `
                         <div>
-                            <h4 class="text-xl font-medium text-indigo-300 mb-4" data-month-key="${monthKey}">${monthKey}</h4>
+                            <h4 class="text-xl font-medium text-indigo-300 mb-4" data-month-key="${monthName}">${monthName}</h4>
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <!-- Contenedor para tarjetas de este mes -->
                             </div>
@@ -752,12 +1052,13 @@
                 
                 archiveContainer.appendChild(yearDiv);
 
-                // 3. Renderizar tarjetas dentro de sus contenedores
                 for (const month of sortedMonths) {
-                    const monthKey = month.substring(3);
-                    const cardContainer = yearDiv.querySelector(`h4[data-month-key="${monthKey}"] + div.grid`);
+                    const monthName = month.substring(3);
+                    const cardContainer = yearDiv.querySelector(`h4[data-month-key="${monthName}"] + div.grid`);
                     
                     if (cardContainer) {
+                        // Ordenar planillas dentro del mes por fecha de envío descendente
+                        grouped[year][month].sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
                         grouped[year][month].forEach(p => renderPlanillaCard(p, cardContainer));
                     }
                 }
@@ -765,166 +1066,352 @@
             feather.replace();
         }
 
+        // --- Funciones de Formulario (Agregar/Editar) ---
 
         /**
-         * Determina el estado actual de una planilla.
+         * Prepara el formulario para editar un registro existente.
+         * ¡CORREGIDO!
          */
-        function getEstado(planilla) {
-            if (planilla.fechaEnvioSecretaria) return 'secretaria';
-            if (planilla.fechaEnvioPresupuesto) return 'presupuesto';
-            return 'oficina';
+        function prepareFormForEdit(registroId) {
+            const registro = allPlanillas.find(p => p.id === registroId);
+            if (!registro) {
+                console.error("No se encontró el registro para editar.");
+                return;
+            }
+
+            // 1. Navegar a la vista de agregar/editar
+            handleNavClick({ preventDefault: () => {}, currentTarget: document.querySelector('a[data-view="view-agregar"]') });
+
+            // 2. Llenar campos de un solo valor (incluyendo inputs de fecha y texto)
+            for (const key in registro) {
+                const input = document.getElementById(key);
+                if (input && input.type !== 'checkbox' && input.type !== 'radio') {
+                    input.value = registro[key] || '';
+                }
+            }
+            
+            // 3. Llenar Checkboxes de Estado Personal
+            personalStateInputs.forEach(input => {
+                input.checked = registro.personalState?.includes(input.value) || false;
+            });
+            
+            // 4. Llenar campos de Seguimiento (Checkboxes y Fechas/Expedientes)
+            checkPresupuesto.checked = !!registro.fechaEnvioPresupuesto;
+            toggleFields(fieldsPresupuesto, checkPresupuesto.checked);
+            document.getElementById('fechaEnvioPresupuesto').value = registro.fechaEnvioPresupuesto || '';
+            document.getElementById('expedientePresupuesto').value = registro.expedientePresupuesto || '';
+
+            checkSecretaria.checked = !!registro.fechaEnvioSecretaria;
+            toggleFields(fieldsSecretaria, checkSecretaria.checked);
+            document.getElementById('fechaEnvioSecretaria').value = registro.fechaEnvioSecretaria || '';
+            document.getElementById('expedienteSecretaria').value = registro.expedienteSecretaria || '';
+            
+            // 5. Checkboxes FA (activar sección y chequear UEs)
+            if (registro.unidadEjecutora === 'FA') {
+                 faCategoriesSection.classList.remove('hidden');
+                 faUeIncludesInputs.forEach(input => {
+                     input.checked = registro.faUeIncludes?.includes(input.value) || false;
+                 });
+            } else {
+                 faCategoriesSection.classList.add('hidden');
+            }
+            
+            // 6. CAMBIO: Checkboxes de Pagos -> Radio Buttons
+            if (registro.checkPagado) {
+                document.getElementById('radioPagado').checked = true;
+            } else {
+                document.getElementById('radioNoPagado').checked = true;
+            }
+            
+            // 7. Cargar Detalle Monetario Dinámico
+            detalleMonetarioContainer.innerHTML = '';
+            if (registro.detalleMonetario && Array.isArray(registro.detalleMonetario) && registro.detalleMonetario.length > 0) {
+                registro.detalleMonetario.forEach(detail => createDetalleMonetarioLine(detail));
+            } else {
+                 createDetalleMonetarioLine(); // Dejar una línea vacía por defecto
+            }
+            updateTotalNeto();
+
+            // 8. Poner el ID y cambiar UI
+            registroIdInput.value = registroId;
+            formTitle.textContent = 'Editar Registro';
+            submitButtonText.textContent = 'Actualizar Registro';
+            cancelEditButton.classList.remove('hidden');
         }
 
         /**
-         * Maneja el envío del formulario para agregar una nueva planilla.
+         * Restablece el formulario a su estado inicial.
+         */
+        function resetForm() {
+            addForm.reset();
+            registroIdInput.value = '';
+            
+            toggleFields(fieldsPresupuesto, false);
+            toggleFields(fieldsSecretaria, false);
+            faCategoriesSection.classList.add('hidden');
+            faUeIncludesInputs.forEach(input => input.checked = false); // Limpiar checkboxes FA
+
+            // Limpiar Estado Personal
+            personalStateInputs.forEach(input => input.checked = false);
+
+            // Limpiar Detalle Monetario
+            detalleMonetarioContainer.innerHTML = '';
+            createDetalleMonetarioLine(); // Dejar una línea vacía por defecto
+            updateTotalNeto();
+            
+            // CAMBIO: Default a "No Pagado"
+            document.getElementById('radioNoPagado').checked = true;
+
+            formTitle.textContent = 'Agregar Nuevo Registro';
+            submitButtonText.textContent = 'Guardar Registro';
+            cancelEditButton.classList.add('hidden');
+        }
+
+        /**
+         * Maneja el envío y actualización del formulario.
          */
         async function handleAddFormSubmit(e) {
             e.preventDefault();
             if (!userId) return; 
             
+            const docId = registroIdInput.value;
             const formData = new FormData(addForm);
             
-            const total = parseFloat(formData.get('valorTotal')) || 0;
-            const deducciones = parseFloat(formData.get('valorDeducciones')) || 0;
+            // Capturar Estado de Personal (checkboxes)
+            const personalState = Array.from(personalStateInputs).filter(input => input.checked).map(input => input.value);
             
-            const nuevaPlanilla = {
+            // Capturar UEs Incluidas (solo si es FA)
+            let faUeIncludes = [];
+            if (formData.get('unidadEjecutora') === 'FA') {
+                faUeIncludes = Array.from(faCategoriesSection.querySelectorAll('input[name="faUeIncludes"]:checked')).map(input => input.value);
+            }
+            
+            // Capturar Detalle Monetario Dinámico
+            const detalleMonetario = [];
+            const detailLines = detalleMonetarioContainer.querySelectorAll('.detalle-linea');
+            detailLines.forEach(line => {
+                const ue = line.querySelector('.input-ue').value;
+                const efectivos = parseFloat(line.querySelector('.input-efectivos').value) || 0;
+                
+                // Reemplazar comas para almacenar como número puro
+                const total = parseFloat(unformatNumber(line.querySelector('.input-total').value)) || 0;
+                const deducciones = parseFloat(unformatNumber(line.querySelector('.input-deducciones').value)) || 0;
+                const neto = parseFloat(unformatNumber(line.querySelector('.input-neto').value)) || 0;
+                
+                if (ue) { // Solo guarda líneas con una UE seleccionada
+                    detalleMonetario.push({
+                        ue: ue,
+                        efectivos: efectivos,
+                        total: total,
+                        deducciones: deducciones,
+                        neto: neto
+                    });
+                }
+            });
+
+            // CAMBIO: Capturar valor de Radio Button
+            const estadoPagoRadio = document.querySelector('input[name="estadoPago"]:checked');
+            const checkPagado = estadoPagoRadio ? estadoPagoRadio.value === 'pagado' : false;
+
+            const registroData = {
+                // Fechas Clave
+                fechaPlanilla: formData.get('fechaPlanilla'), // YYYY-MM
+                fechaEnvio: formData.get('fechaEnvio'), // YYYY-MM-DD
+                
+                // Datos Principales
                 tipoDocumento: formData.get('tipoDocumento'),
                 expediente: formData.get('expediente'),
-                fechaEnvio: formData.get('fechaEnvio'),
-                unidadEjecutora: formData.get('unidadEjecutora'),
+                unidadEjecutora: formData.get('unidadEjecutora'), // UE Principal
                 objetoGasto: formData.get('objetoGasto'),
-                tipoTropa: formData.get('tipoTropa'),
                 tipoPlanilla: formData.get('tipoPlanilla'),
                 
-                fechaEnvioPresupuesto: formData.get('fechaEnvioPresupuesto') || null,
-                expedientePresupuesto: formData.get('expedientePresupuesto') || null,
-                
-                fechaEnvioSecretaria: formData.get('fechaEnvioSecretaria') || null,
-                expedienteSecretaria: formData.get('expedienteSecretaria') || null,
-                
-                valorTotal: total,
-                valorDeducciones: deducciones,
-                valorNeto: total - deducciones,
-                
-                createdAt: Timestamp.now()
-            };
+                // Control de Personal (Nuevo formato)
+                personalState: personalState, // Array de estados seleccionados
+                faUeIncludes: faUeIncludes, // UEs incluidas si es FA
+                observacionesPersonal: formData.get('observacionesPersonal') || null,
 
+                // Seguimiento de Remisiones
+                fechaEnvioPresupuesto: checkPresupuesto.checked ? formData.get('fechaEnvioPresupuesto') : null,
+                expedientePresupuesto: checkPresupuesto.checked ? formData.get('expedientePresupuesto') : null,
+                
+                fechaEnvioSecretaria: checkSecretaria.checked ? formData.get('fechaEnvioSecretaria') : null,
+                expedienteSecretaria: checkSecretaria.checked ? formData.get('expedienteSecretaria') : null,
+                
+                // Control Monetario Dinámico
+                detalleMonetario: detalleMonetario,
+
+                // Control de Pago Global (ahora desde radio)
+                checkPagado: checkPagado,
+            };
+            
             try {
-                await addDoc(collection(db, collectionPath), nuevaPlanilla);
-                addForm.reset();
-                calculateNeto(); // Resetear neto
-                toggleFields(fieldsPresupuesto, false);
-                toggleFields(fieldsSecretaria, false);
-                // Navegar de vuelta al dashboard
+                if (docId) {
+                    await updateDoc(doc(db, collectionPath, docId), registroData);
+                } else {
+                    registroData.createdAt = Timestamp.now();
+                    await addDoc(collection(db, collectionPath), registroData);
+                }
+
+                resetForm();
                 handleNavClick({ preventDefault: () => {}, currentTarget: document.querySelector('a[data-view="view-dashboard"]') });
             } catch (error) {
-                console.error("Error al agregar documento: ", error);
+                console.error(`Error al ${docId ? 'actualizar' : 'agregar'} documento: `, error);
+            }
+        }
+        
+        // --- Funciones de Autenticación y Carga ---
+        
+        function initializeFirebase() {
+            try {
+                const loginScreen = document.getElementById('login-screen');
+                const mainApp = document.getElementById('main-app');
+                const userPhoto = document.getElementById('user-photo');
+                const userName = document.getElementById('user-name');
+                const userEmail = document.getElementById('user-email');
+                const loginError = document.getElementById('login-error');
+
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                provider = new GoogleAuthProvider();
+                setLogLevel('Debug');
+                
+                // Crear primera línea de detalle monetario
+                createDetalleMonetarioLine();
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userPhoto.src = user.photoURL || 'https://placehold.co/40x40/606060/FFFFFF?text=?';
+                        userName.textContent = user.displayName || 'Usuario';
+                        userEmail.textContent = user.email;
+                        collectionPath = `planillas/${userId}/registros`;
+                        
+                        mainApp.classList.remove('hidden');
+                        loginScreen.classList.add('hidden');
+                        loginError.textContent = '';
+                        
+                        setupSnapshotListener();
+                    } else {
+                        userId = null;
+                        if (unsubscribe) unsubscribe();
+                        mainApp.classList.add('hidden');
+                        loginScreen.classList.remove('hidden');
+                    }
+                });
+            } catch (error) {
+                console.error("Error al inicializar Firebase:", error);
+                document.getElementById('login-error').textContent = "Error al conectar con Firebase.";
             }
         }
 
-        /**
-         * Maneja el clic en los botones de eliminar.
-         */
-        async function handleDeleteClick(e) {
-            if (!userId) return; 
+        async function handleLogin() {
+            try {
+                document.getElementById('login-error').textContent = '';
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Error al iniciar sesión:", error);
+                document.getElementById('login-error').textContent = "Error al iniciar sesión. Intenta de nuevo.";
+            }
+        }
 
+        async function handleLogout() {
+            try { await signOut(auth); } 
+            catch (error) { console.error("Error al cerrar sesión:", error); }
+        }
+
+        // --- Event Listeners Globales ---
+        
+        function handleCardActionClick(e) {
             let target = e.target;
-            while (target != null && !target.classList.contains('delete-btn')) {
+            
+            // Buscar el botón (edit-btn o delete-btn) subiendo por el DOM
+            while (target != null && !target.classList.contains('edit-btn') && !target.classList.contains('delete-btn')) {
                 target = target.parentElement;
             }
 
-            if (target && target.classList.contains('delete-btn')) {
-                const docId = target.dataset.id;
-                if (await showDeleteConfirmation()) {
-                    try {
-                        await deleteDoc(doc(db, collectionPath, docId));
-                    } catch (error) {
-                        console.error("Error al eliminar documento:", error);
-                    }
+            if (target && target.classList.contains('edit-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                prepareFormForEdit(target.dataset.id); // ¡Llamada corregida!
+            } else if (target && target.classList.contains('delete-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleDeleteClick(target.dataset.id);
+            }
+        }
+
+        async function handleDeleteClick(docId) {
+            if (!userId) return; 
+
+            if (await showDeleteConfirmation()) {
+                try {
+                    await deleteDoc(doc(db, collectionPath, docId));
+                } catch (error) {
+                    console.error("Error al eliminar documento:", error);
                 }
             }
         }
 
-        /**
-         * Muestra un modal de confirmación (custom).
-         */
         function showDeleteConfirmation() {
             return new Promise((resolve) => {
-                const modalOverlay = document.createElement('div');
-                modalOverlay.className = "fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50";
-                modalOverlay.innerHTML = `
-                    <div class="bg-slate-800 rounded-lg shadow-xl p-6 w-full max-w-sm border border-slate-700">
-                        <h3 class="text-lg font-medium text-white">Confirmar Eliminación</h3>
-                        <p class="mt-2 text-sm text-neutral-400">¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.</p>
-                        <div class="mt-4 flex justify-end space-x-3">
-                            <button id="cancelDelete" class="py-2 px-4 border border-slate-600 rounded-md shadow-sm text-sm font-medium text-neutral-200 bg-slate-700 hover:bg-slate-600">Cancelar</button>
-                            <button id="confirmDelete" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">Eliminar</button>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(modalOverlay);
+                const modalOverlay = document.getElementById('customModal');
+                document.getElementById('modal-title').textContent = 'Confirmar Eliminación';
+                document.getElementById('modal-message').textContent = '¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.';
+                
+                modalOverlay.classList.remove('hidden');
+                modalOverlay.classList.add('flex');
 
-                document.getElementById('confirmDelete').onclick = () => {
-                    document.body.removeChild(modalOverlay);
+                document.getElementById('modal-confirm').onclick = () => {
+                    modalOverlay.classList.add('hidden');
+                    modalOverlay.classList.remove('flex');
                     resolve(true);
                 };
-                document.getElementById('cancelDelete').onclick = () => {
-                    document.body.removeChild(modalOverlay);
+                document.getElementById('modal-cancel').onclick = () => {
+                    modalOverlay.classList.add('hidden');
+                    modalOverlay.classList.remove('flex');
                     resolve(false);
                 };
             });
         }
-
-        function clearFilters() {
-            filterForm.reset();
-            renderPlanillas();
-        }
-
-        /**
-         * Muestra/oculta los campos dependientes de un checkbox.
-         */
-        function toggleFields(fieldsDiv, isChecked) {
-            if (isChecked) {
-                fieldsDiv.classList.remove('hidden');
+        
+        function toggleFaUeIncludesSection() {
+            if (unidadEjecutoraSelect.value === 'FA') {
+                faCategoriesSection.classList.remove('hidden');
             } else {
-                fieldsDiv.classList.add('hidden');
-                // Limpiar campos al ocultar
-                fieldsDiv.querySelectorAll('input').forEach(input => input.value = '');
+                faCategoriesSection.classList.add('hidden');
+                // Limpiar los checkboxes al ocultar
+                faUeIncludesInputs.forEach(input => input.checked = false);
             }
         }
 
-        /**
-         * Calcula el valor neto a pagar.
-         */
-        function calculateNeto() {
-            const total = parseFloat(valorTotal.value) || 0;
-            const deducciones = parseFloat(valorDeducciones.value) || 0;
-            const neto = total - deducciones;
-            valorNeto.value = isNaN(neto) ? '0.00' : neto.toFixed(2);
-        }
+        // Asignación de Eventos al cargar el script
+        window.onload = function() {
+            initializeFirebase();
+            feather.replace();
 
-        // --- Event Listeners ---
-        loginButton.addEventListener('click', handleLogin);
-        logoutButton.addEventListener('click', handleLogout);
-        navLinks.forEach(link => link.addEventListener('click', handleNavClick));
-        
-        addForm.addEventListener('submit', handleAddFormSubmit);
-        // Usar 'planillasContainer' y 'archiveContainer' para la delegación de eventos de borrado
-        planillasContainer.addEventListener('click', handleDeleteClick);
-        archiveContainer.addEventListener('click', handleDeleteClick);
-        
-        filterButton.addEventListener('click', renderPlanillas);
-        clearFilterButton.addEventListener('click', clearFilters);
+            // Formulario y Filtros
+            document.getElementById('login-button').addEventListener('click', handleLogin);
+            document.getElementById('logout-button').addEventListener('click', handleLogout);
+            navLinks.forEach(link => link.addEventListener('click', handleNavClick));
+            addForm.addEventListener('submit', handleAddFormSubmit);
+            cancelEditButton.addEventListener('click', (e) => { e.preventDefault(); resetForm(); handleNavClick({ preventDefault: () => {}, currentTarget: document.querySelector('a[data-view="view-dashboard"]') }); });
 
-        // Listeners para el formulario de agregar
-        checkPresupuesto.addEventListener('change', (e) => toggleFields(fieldsPresupuesto, e.target.checked));
-        checkSecretaria.addEventListener('change', (e) => toggleFields(fieldsSecretaria, e.target.checked));
-        valorTotal.addEventListener('input', calculateNeto);
-        valorDeducciones.addEventListener('input', calculateNeto);
+            // Eventos en el formulario de agregar/editar
+            unidadEjecutoraSelect.addEventListener('change', toggleFaUeIncludesSection);
+            checkPresupuesto.addEventListener('change', (e) => toggleFields(fieldsPresupuesto, e.target.checked));
+            checkSecretaria.addEventListener('change', (e) => toggleFields(fieldsSecretaria, e.target.checked));
+            
+            // Eventos de Control Monetario Dinámico
+            addDetalleBtn.addEventListener('click', () => createDetalleMonetarioLine());
 
-        // --- Inicialización ---
-        initializeFirebase();
-        feather.replace(); // Cargar iconos iniciales
+            // Delegación de eventos de la vista principal y archivo (¡Corregido!)
+            planillasContainer.addEventListener('click', handleCardActionClick);
+            archiveContainer.addEventListener('click', handleCardActionClick);
+            
+            document.getElementById('filterButton').addEventListener('click', (e) => { e.preventDefault(); renderPlanillas(); });
+            document.getElementById('clearFilterButton').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('filterForm').reset(); renderPlanillas(); });
+        };
     </script>
 </body>
 </html>
