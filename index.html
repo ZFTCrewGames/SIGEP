@@ -96,6 +96,10 @@
             background-color: #ef4444; /* red-500 */
             border-color: #ef4444;
         }
+        /* Estilo para el calendario del dashboard */
+        .calendar-month {
+            min-height: 120px;
+        }
     </style>
 </head>
 <body class="text-neutral-200">
@@ -126,12 +130,20 @@
                 </div>
                 <nav class="flex-1 overflow-y-auto mt-4 space-y-2 px-3">
                     <a href="#" data-view="view-dashboard" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-white bg-indigo-600">
-                        <i data-feather="grid" class="w-5 h-5 mr-3"></i>
+                        <i data-feather="home" class="w-5 h-5 mr-3"></i>
                         Dashboard
+                    </a>
+                    <a href="#" data-view="view-search" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-neutral-300 hover:bg-slate-700 hover:text-white">
+                        <i data-feather="search" class="w-5 h-5 mr-3"></i>
+                        Búsqueda
                     </a>
                     <a href="#" data-view="view-archive" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-neutral-300 hover:bg-slate-700 hover:text-white">
                         <i data-feather="archive" class="w-5 h-5 mr-3"></i>
                         Archivo por Fecha
+                    </a>
+                    <a href="#" data-view="view-reports" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-neutral-300 hover:bg-slate-700 hover:text-white">
+                        <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i>
+                        Reportes
                     </a>
                     <a href="#" data-view="view-agregar" class="nav-link flex items-center px-3 py-2.5 text-sm font-medium rounded-md text-neutral-300 hover:bg-slate-700 hover:text-white">
                         <i data-feather="plus-circle" class="w-5 h-5 mr-3"></i>
@@ -147,34 +159,95 @@
                             <p id="user-email" class="text-xs text-neutral-400">...</p>
                         </div>
                     </div>
+                    
+                    <!-- Botón de Logout -->
                     <button id="logout-button" class="w-full text-left mt-4 flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-300 hover:bg-slate-700 hover:text-white">
                         <i data-feather="log-out" class="w-5 h-5 mr-3"></i>
                         Cerrar Sesión
                     </button>
+                    
+                    <!-- Botón de Migración (VUELVE A APARECER) -->
+                    <div id="migration-container" class="mt-4 pt-4 border-t border-slate-600">
+                        <button id="migrate-button" class="w-full text-left flex items-center px-3 py-2 text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700">
+                            <i data-feather="upload-cloud" class="w-5 h-5 mr-3"></i>
+                            <span id="migrate-button-text">Migrar Datos Privados</span>
+                            <div id="migrate-loader" class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-4 w-4 ml-3 hidden"></div>
+                        </button>
+                    </div>
+                    
+                    <!-- App ID (para colaboración) -->
+                    <div class="mt-4 pt-4 border-t border-slate-600">
+                        <span class="text-xs text-neutral-500">App ID:</span>
+                        <span id="appIdDisplay" class="text-xs font-mono text-neutral-400"></span>
+                    </div>
                 </div>
             </aside>
 
             <!-- Contenido Principal -->
             <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                 
-                <!-- VISTA: DASHBOARD (Ver Registros) -->
+                <!-- VISTA: DASHBOARD (Resumen General) -->
                 <section id="view-dashboard" class="view-section active">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Dashboard de Registros</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-6">Dashboard - Resumen Anual</h2>
+                    
+                    <div id="loading-dashboard" class="flex justify-center items-center py-10">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-600 h-12 w-12"></div>
+                        <p class="ml-4 text-neutral-400">Calculando resumen...</p>
+                    </div>
+
+                    <div id="dashboardContainer" class="hidden">
+                        <!-- Selector de Año -->
+                        <div class="mb-6 max-w-xs">
+                            <label for="dashboardYearSelect" class="block text-sm font-medium text-neutral-300">Seleccionar Año</label>
+                            <select id="dashboardYearSelect" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                                <!-- Opciones de año se llenarán dinámicamente -->
+                            </select>
+                        </div>
+
+                        <!-- Calendario Visual -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="calendar-grid">
+                            <!-- Los meses se insertarán aquí dinámicamente -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- VISTA: BÚSQUEDA (Antiguo Dashboard) -->
+                <section id="view-search" class="view-section">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Búsqueda de Registros</h2>
                     
                     <!-- Sección de Filtros -->
-                    <form id="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 p-4 bg-slate-800 rounded-lg shadow-lg">
+                    <form id="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 p-4 bg-slate-800 rounded-lg shadow-lg">
                         <div>
                             <label for="searchExpediente" class="block text-sm font-medium text-neutral-300">Buscar por Expediente</label>
                             <input type="text" id="searchExpediente" name="searchExpediente" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white" placeholder="Buscar...">
                         </div>
                         <div>
-                            <label for="filterEstado" class="block text-sm font-medium text-neutral-300">Filtrar por Estado Remisión</label>
+                            <label for="filterEstado" class="block text-sm font-medium text-neutral-300">Estado Remisión</label>
                             <select id="filterEstado" name="filterEstado" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
                                 <option value="">Todos</option>
                                 <option value="oficina">En Oficina</option>
                                 <option value="presupuesto">En Presupuesto</option>
                                 <option value="secretaria">En Secretaría</option>
                                 <option value="pagado">Pagado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="filterObjetoGasto" class="block text-sm font-medium text-neutral-300">Objeto de Gasto</label>
+                            <select id="filterObjetoGasto" name="filterObjetoGasto" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                                <option value="">Todos</option>
+                                <option value="Haberes">Haberes</option>
+                                <option value="Vacaciones">Vacaciones</option>
+                                <option value="Bonificación">Bonificación</option>
+                                <option value="Décimo Tercero">Décimo Tercero</option>
+                                <option value="Décimo Cuarto">Décimo Cuarto</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="filterTipoPlanilla" class="block text-sm font-medium text-neutral-300">Tipo de Planilla</label>
+                            <select id="filterTipoPlanilla" name="filterTipoPlanilla" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white">
+                                <option value="">Todas</option>
+                                <option value="Ordinaria">Ordinaria</option>
+                                <option value="Complementaria">Complementaria</option>
                             </select>
                         </div>
                         <div>
@@ -185,7 +258,7 @@
                             <label for="filterFechaFin" class="block text-sm font-medium text-neutral-300">Fecha Envío Hasta</label>
                             <input type="date" id="filterFechaFin" name="filterFechaFin" class="mt-1 block w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:focus:border-indigo-500 sm:text-sm text-white">
                         </div>
-                        <div class="sm:col-span-2 lg:col-span-4 flex items-center space-x-2">
+                        <div class="sm:col-span-2 lg:col-span-3 flex items-center space-x-2">
                             <button type="button" id="filterButton" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-800">
                                 Filtrar
                             </button>
@@ -196,7 +269,7 @@
                     </form>
 
                     <!-- Contenedor de Tarjetas -->
-                    <div id="loading" class="flex justify-center items-center py-10">
+                    <div id="loading-search" class="flex justify-center items-center py-10">
                         <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-600 h-12 w-12"></div>
                         <p class="ml-4 text-neutral-400">Cargando datos...</p>
                     </div>
@@ -209,9 +282,45 @@
 
                 <!-- VISTA: ARCHIVO POR FECHA -->
                 <section id="view-archive" class="view-section">
-                    <h2 class="text-2xl font-semibold text-white mb-6">Archivo por Fecha</h2>
+                    <h2 class="text-2xl font-semibold text-white mb-6">Archivo por Fecha (Basado en Ref. Planilla)</h2>
                     <div id="archiveContainer" class="space-y-12">
                         <!-- El contenido se genera dinámicamente -->
+                    </div>
+                </section>
+                
+                <!-- VISTA: REPORTES -->
+                <section id="view-reports" class="view-section">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Reporte por Objeto de Gasto</h2>
+                    
+                    <div id="loading-reports" class="flex justify-center items-center py-10">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-600 h-12 w-12"></div>
+                        <p class="ml-4 text-neutral-400">Generando reporte...</p>
+                    </div>
+                    
+                    <div id="reportsContainer" class="hidden max-w-4xl mx-auto bg-slate-800 rounded-lg shadow-lg p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-700">
+                                <thead class="bg-slate-700/50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Objeto de Gasto</th>
+                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Total Pagado</th>
+                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Total Pendiente</th>
+                                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Total Neto</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportsTableBody" class="divide-y divide-slate-700">
+                                    <!-- Las filas se insertarán aquí -->
+                                </tbody>
+                                <tfoot class="bg-slate-700/50">
+                                    <tr class="font-bold text-white">
+                                        <td class="px-6 py-4 text-left text-sm">TOTAL GENERAL</td>
+                                        <td id="reportTotalPagado" class="px-6 py-4 text-right text-sm">L. 0.00</td>
+                                        <td id="reportTotalPendiente" class="px-6 py-4 text-right text-sm">L. 0.00</td>
+                                        <td id="reportTotalNeto" class="px-6 py-4 text-right text-sm">L. 0.00</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
@@ -261,6 +370,8 @@
                                             <option value="13">13 - Fuerza Naval</option>
                                             <option value="14">14 - Estado Mayor Conjunto</option>
                                             <option value="15">15 - Hospital Militar</option>
+                                            <option value="18">18 - CDN</option>
+                                            <option value="19">19 - IMFFAA</option>
                                             <option value="32">32 - PMOP</option>
                                             <option value="FA">Fuerzas Armadas (FA)</option>
                                         </select>
@@ -276,7 +387,6 @@
                                             <option value="Bonificación">Bonificación</option>
                                             <option value="Décimo Tercero">Décimo Tercero</option>
                                             <option value="Décimo Cuarto">Décimo Cuarto</option>
-                                            <option value="Otro">Otro</option>
                                         </select>
                                     </div>
                                     <div>
@@ -313,6 +423,14 @@
                                     <label class="flex items-center space-x-2 text-sm text-white">
                                         <input type="checkbox" name="faUeIncludes" value="15" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
                                         <span>15 - H. Militar</span>
+                                    </label>
+                                     <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="18" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>18 - CDN</span>
+                                    </label>
+                                     <label class="flex items-center space-x-2 text-sm text-white">
+                                        <input type="checkbox" name="faUeIncludes" value="19" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
+                                        <span>19 - IMFFAA</span>
                                     </label>
                                     <label class="flex items-center space-x-2 text-sm text-white">
                                         <input type="checkbox" name="faUeIncludes" value="32" class="h-4 w-4 text-indigo-600 rounded border-slate-500 focus:ring-indigo-500">
@@ -387,7 +505,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Sección CONTROL MONETARIO DETALLADO POR UE -->
+                            <!-- Sección CONTROL MONETARIO DETALLADO POR UE (SIMETRÍA CORREGIDA) -->
                             <div class="bg-slate-700 p-6 rounded-lg shadow-inner">
                                 <h3 class="text-lg font-medium text-green-400 border-b border-slate-600 pb-2 mb-4">Control Monetario Detallado (Por UE)</h3>
                                 
@@ -409,7 +527,7 @@
                             <!-- Sección Control de Pago (Global) -->
                             <div class="pt-4 flex flex-col justify-center space-y-2 p-3 bg-slate-700 rounded-md">
                                 <h3 class="text-lg font-medium text-indigo-300 border-b border-slate-600 pb-2 mb-2">Control de Pago Global</h3>
-                                <!-- CAMBIO: Reemplazado checkbox por dos radios -->
+                                <!-- Reemplazado checkbox por dos radios -->
                                 <div class="flex items-center space-x-6 py-2">
                                     <label for="radioPagado" class="flex items-center space-x-2 text-sm font-medium text-white">
                                         <input type="radio" id="radioPagado" name="estadoPago" value="pagado" class="h-4 w-4 text-green-500 border-slate-500 focus:ring-green-500">
@@ -443,7 +561,8 @@
                         <p class="mt-2 text-sm text-neutral-400" id="modal-message"></p>
                         <div class="mt-4 flex justify-end space-x-3">
                             <button id="modal-cancel" class="py-2 px-4 border border-slate-600 rounded-md shadow-sm text-sm font-medium text-neutral-200 bg-slate-700 hover:bg-slate-600">Cancelar</button>
-                            <button id="modal-confirm" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">Eliminar</button>
+                            <!-- El color de este botón cambiará dinámicamente -->
+                            <button id="modal-confirm" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white">Confirmar</button>
                         </div>
                     </div>
                 </div>
@@ -454,18 +573,21 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        // Importaciones de Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // Importaciones de Firebase (Versión 12.5.0 actualizada)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
         import { 
             getAuth, 
             onAuthStateChanged,
             GoogleAuthProvider,
             signInWithPopup,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+            signOut,
+            signInWithCustomToken, // Necesario para el entorno de desarrollo
+            signInAnonymously      // Fallback
+        } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
         import { 
             getFirestore, 
             doc, 
+            getDoc,
             addDoc, 
             updateDoc, 
             deleteDoc, 
@@ -473,21 +595,31 @@
             onSnapshot, 
             query,
             Timestamp,
-            setLogLevel
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            writeBatch,
+            getDocs,
+            setLogLevel,
+            setDoc // Necesario para la migración
+        } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-        // --- Configuración de Firebase (proporcionada por el usuario) ---
+        // --- Configuración de Firebase (Variables de entorno) ---
+        
+        // ¡IMPORTANTE! Esta es tu configuración de Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyA9l_RrRwP8gvmrvhEBpAV0aV4v9sMG-UA",
-            authDomain: "sigep-planillas.firebaseapp.com",
-            projectId: "sigep-planillas",
-            storageBucket: "sigep-planillas.firebasestorage.app",
-            messagingSenderId: "707813910405",
-            appId: "1:707813910405:web:2d878a07039d0bbaa046ec"
+          apiKey: "AIzaSyA9l_RrRwP8gvmrvhEBpAV0aV4v9sMG-UA",
+          authDomain: "sigep-planillas.firebaseapp.com",
+          projectId: "sigep-planillas",
+          storageBucket: "sigep-planillas.firebasestorage.app",
+          messagingSenderId: "707813910405",
+          appId: "1:707813910405:web:2d878a07039d0bbaa046ec"
         };
+        // La línea original que usaba __firebase_config ha sido reemplazada por el objeto de arriba.
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-sigep-app';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
         
         // --- Variables Globales ---
-        let app, auth, db, provider, userId, collectionPath;
+        let app, auth, db, provider, userId, collectionPath; // collectionPath es el NUEVO PÚBLICO
         let allPlanillas = [];
         let unsubscribe;
 
@@ -495,17 +627,38 @@
         const ueOptions = {
             "11": "11 - Fuerza del Ejército", "12": "12 - Fuerza Aérea",
             "13": "13 - Fuerza Naval", "14": "14 - Estado Mayor Conjunto",
-            "15": "15 - Hospital Militar", "32": "32 - PMOP",
+            "15": "15 - Hospital Militar", "18": "18 - CDN",
+            "19": "19 - IMFFAA", "32": "32 - PMOP",
             "FA": "Fuerzas Armadas (FA)"
         };
         const monthNames = [
             "01-Enero", "02-Febrero", "03-Marzo", "04-Abril", "05-Mayo", "06-Junio",
             "07-Julio", "08-Agosto", "09-Septiembre", "10-Octubre", "11-Noviembre", "12-Diciembre"
         ];
+        const monthNamesShort = [
+            "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+        ];
+        const objetoGastoOptions = [
+            "Haberes", "Vacaciones", "Bonificación", "Décimo Tercero", "Décimo Cuarto"
+        ];
+        const categoriaMontoOptions = {
+            "general": "Activo",
+            "bajas": "Bajas",
+            "cambio_categoria": "Cambio de Categoría",
+        };
 
         // --- Selectores del DOM ---
+        const loginScreen = document.getElementById('login-screen');
         const loginButton = document.getElementById('login-button');
+        const loginError = document.getElementById('login-error');
+        const mainApp = document.getElementById('main-app');
         const logoutButton = document.getElementById('logout-button');
+        
+        const userPhoto = document.getElementById('user-photo');
+        const userName = document.getElementById('user-name');
+        const userEmail = document.getElementById('user-email');
+        const appIdDisplay = document.getElementById('appIdDisplay');
+
         const navLinks = document.querySelectorAll('.nav-link');
         const viewSections = document.querySelectorAll('.view-section');
         const addForm = document.getElementById('addForm');
@@ -516,6 +669,15 @@
         
         const planillasContainer = document.getElementById('planillasContainer');
         const archiveContainer = document.getElementById('archiveContainer');
+        const reportsContainer = document.getElementById('reportsContainer');
+        const reportsTableBody = document.getElementById('reportsTableBody');
+        const dashboardContainer = document.getElementById('dashboardContainer');
+        
+        // Selectores de Migración
+        const migrationContainer = document.getElementById('migration-container');
+        const migrateButton = document.getElementById('migrate-button');
+        const migrateButtonText = document.getElementById('migrate-button-text');
+        const migrateLoader = document.getElementById('migrate-loader');
         
         // Formulario "Agregar" campos específicos
         const unidadEjecutoraSelect = document.getElementById('unidadEjecutora');
@@ -549,7 +711,12 @@
             });
             e.currentTarget.classList.add('bg-indigo-600', 'text-white');
             e.currentTarget.classList.remove('text-neutral-300', 'hover:bg-slate-700', 'hover:text-white');
+            
+            // Renderizar la vista específica si es necesario
             if (targetView === 'view-agregar') resetForm();
+            if (targetView === 'view-reports') renderReportsView();
+            if (targetView === 'view-dashboard') renderDashboardView();
+            
             feather.replace();
         }
 
@@ -661,42 +828,50 @@
          */
         function createDetalleMonetarioLine(detailData = {}) {
             const lineDiv = document.createElement('div');
-            lineDiv.className = 'detalle-linea grid grid-cols-1 md:grid-cols-7 gap-2 p-3 bg-slate-800 rounded-md border border-slate-700 items-end';
+            // CORREGIDO: Grid simétrico
+            lineDiv.className = 'detalle-linea grid grid-cols-10 gap-2 p-3 bg-slate-800 rounded-md border border-slate-700 items-end';
             
-            // Valores iniciales (sin formato para 'value', formateado para 'display' si es readonly)
+            // Valores iniciales
             const totalInitial = detailData.total || '';
             const deduccionesInitial = detailData.deducciones || '';
             const netoFormatted = detailData.neto ? formatNumber(detailData.neto) : '0.00';
 
             lineDiv.innerHTML = `
-                <!-- UE -->
-                <div class="col-span-2">
+                <!-- UE (col-span-3) -->
+                <div class="col-span-3">
                     <label class="block text-xs font-medium text-neutral-400 mb-1">UE Detalle</label>
                     <select name="detalleUE" class="input-ue block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-sm text-white detalle-monto-input">
                         ${Object.keys(ueOptions).map(key => `<option value="${key}" ${key === detailData.ue ? 'selected' : ''}>${ueOptions[key]}</option>`).join('')}
                     </select>
                 </div>
-                <!-- Efectivos -->
+                <!-- Categoría de Monto (col-span-2) -->
+                <div class="col-span-2">
+                    <label class="block text-xs font-medium text-neutral-400 mb-1">Estado</label>
+                    <select name="detalleCategoria" class="input-categoria block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-sm text-white detalle-monto-input">
+                        ${Object.keys(categoriaMontoOptions).map(key => `<option value="${key}" ${key === detailData.categoriaMonto ? 'selected' : ''}>${categoriaMontoOptions[key]}</option>`).join('')}
+                    </select>
+                </div>
+                <!-- Efectivos (col-span-1) -->
                 <div>
                     <label class="block text-xs font-medium text-neutral-400 mb-1">Efectivos</label>
                     <input type="number" step="1" value="${detailData.efectivos || ''}" class="input-efectivos block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-white detalle-monto-input" placeholder="0">
                 </div>
-                <!-- Total -->
+                <!-- Total (col-span-1) -->
                 <div>
                     <label class="block text-xs font-medium text-neutral-400 mb-1">Total</label>
                     <input type="text" value="${totalInitial}" class="input-total block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-white detalle-monto-input" placeholder="0.00">
                 </div>
-                <!-- Deducciones -->
+                <!-- Deducciones (col-span-1) -->
                 <div>
                     <label class="block text-xs font-medium text-neutral-400 mb-1">Deducc.</label>
                     <input type="text" value="${deduccionesInitial}" class="input-deducciones block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-white detalle-monto-input" placeholder="0.00">
                 </div>
-                <!-- Neto -->
+                <!-- Neto (col-span-1) -->
                 <div>
                     <label class="block text-xs font-medium text-neutral-400 mb-1">Neto</label>
                     <input type="text" value="${netoFormatted}" readonly class="input-neto block w-full bg-slate-900 border border-slate-600 rounded-md shadow-sm text-green-400 font-bold detalle-monto-input" placeholder="0.00">
                 </div>
-                <!-- Acción -->
+                <!-- Botón Eliminar (col-span-1) -->
                 <div class="flex items-center justify-center">
                     <button type="button" class="remove-detalle-btn text-red-500 hover:text-red-400 p-1 rounded-full hover:bg-slate-700" title="Eliminar Detalle">
                         <i data-feather="x-circle" class="w-5 h-5"></i>
@@ -741,8 +916,11 @@
         function setupSnapshotListener() {
             if (!userId) return; 
             if (unsubscribe) unsubscribe();
-            document.getElementById('loading').classList.remove('hidden');
-
+            
+            // Mostrar todos los loaders
+            document.querySelectorAll('[id^="loading-"]').forEach(el => el.classList.remove('hidden'));
+            
+            // RUTA PÚBLICA (collectionPath)
             const q = query(collection(db, collectionPath));
             
             unsubscribe = onSnapshot(q, (snapshot) => {
@@ -754,13 +932,32 @@
                 // Ordenar por fecha de envío (Trabajo) descendente
                 allPlanillas.sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
                 
-                renderPlanillas();
-                renderArchiveView();
+                // Si la colección pública está vacía, no ocultar el botón de migración
+                if (allPlanillas.length > 0) {
+                    migrationContainer.classList.add('hidden');
+                } else {
+                    migrationContainer.classList.remove('hidden');
+                }
                 
-                document.getElementById('loading').classList.add('hidden');
+                // Renderizar todas las vistas que dependen de estos datos
+                renderPlanillas(); // Vista Búsqueda
+                renderArchiveView(); // Vista Archivo
+                renderReportsView(); // Vista Reportes
+                renderDashboardView(); // Vista Dashboard
+                
+                // Ocultar todos los loaders
+                document.querySelectorAll('[id^="loading-"]').forEach(el => el.classList.add('hidden'));
+                
+                // Mostrar contenedores
+                document.getElementById('planillasContainer').classList.remove('hidden');
+                document.getElementById('reportsContainer').classList.remove('hidden');
+                document.getElementById('dashboardContainer').classList.remove('hidden');
+
             }, (error) => {
                 console.error("Error al obtener datos:", error);
-                document.getElementById('loading').textContent = "Error al cargar los datos.";
+                 document.querySelectorAll('[id^="loading-"]').forEach(el => {
+                     el.textContent = "Error al cargar los datos.";
+                 });
             });
         }
 
@@ -768,12 +965,16 @@
          * Renderiza la vista principal aplicando filtros.
          */
         function renderPlanillas() {
+            if (!planillasContainer) return;
             planillasContainer.innerHTML = '';
+            
             const filterForm = document.getElementById('filterForm');
             const formData = new FormData(filterForm);
 
             const searchExp = formData.get('searchExpediente')?.toLowerCase().trim() || '';
             const filterEst = formData.get('filterEstado') || '';
+            const filterObjGasto = formData.get('filterObjetoGasto') || '';
+            const filterTipoPlan = formData.get('filterTipoPlanilla') || '';
             const filterStart = formData.get('filterFechaInicio') || '';
             const filterEnd = formData.get('filterFechaFin') || '';
 
@@ -791,6 +992,12 @@
                 // Filtrar por Estado Remisión
                 const estado = getEstado(p);
                 if (filterEst && estado !== filterEst) return false;
+                
+                // NUEVO: Filtro Objeto Gasto
+                if (filterObjGasto && p.objetoGasto !== filterObjGasto) return false;
+                
+                // NUEVO: Filtro Tipo Planilla
+                if (filterTipoPlan && p.tipoPlanilla !== filterTipoPlan) return false;
                 
                 // Filtro de Fechas de Envío (Trabajo)
                 if (filterStart && pDate < filterStart) return false;
@@ -873,7 +1080,7 @@
             let faIncludesHTML = '';
             if (planilla.unidadEjecutora === 'FA' && planilla.faUeIncludes?.length) {
                 // Obtener nombres cortos de UE (Ej: "Ejército", "Aérea")
-                const includedUEs = planilla.faUeIncludes.map(ue => ueOptions[ue].split(' - ')[1] || ue).join(', ');
+                const includedUEs = planilla.faUeIncludes.map(ue => (ueOptions[ue] ? ueOptions[ue].split(' - ')[1] : ue) || ue).join(', ');
                 faIncludesHTML = `
                     <div class="mt-3 pt-3 border-t border-slate-700">
                         <h4 class="text-xs font-semibold text-neutral-400 uppercase mb-1">UEs INCLUIDAS</h4>
@@ -897,9 +1104,11 @@
             let detalleMonetarioHTML = '';
             if (planilla.detalleMonetario && planilla.detalleMonetario.length > 0) {
                 const detalleRows = planilla.detalleMonetario.map(d => {
-                    const ueName = ueOptions[d.ue] || d.ue;
+                    const ueName = ueOptions[d.ue] ? ueOptions[d.ue].split(' - ')[0] : d.ue;
                     const efectivos = d.efectivos ? ` (${d.efectivos} pers)` : '';
-                    return `<div class="flex justify-between text-xs text-neutral-400 border-b border-slate-800 py-1"><span>${ueName.split(' - ')[0]} ${efectivos}</span><span class="text-white">${formatMoney(d.neto)}</span></div>`;
+                    // NUEVO: Mostrar categoría de monto
+                    const categoria = categoriaMontoOptions[d.categoriaMonto] ? ` [${categoriaMontoOptions[d.categoriaMonto]}]` : '';
+                    return `<div class="flex justify-between text-xs text-neutral-400 border-b border-slate-800 py-1"><span>${ueName}${efectivos}${categoria}</span><span class="text-white">${formatMoney(d.neto)}</span></div>`;
                 }).join('');
 
                 detalleMonetarioHTML = `
@@ -999,23 +1208,26 @@
         
         /**
          * Renderiza la vista de archivo por año y mes.
+         * NUEVO: Ordenado por fechaPlanilla (YYYY-MM) y con totales.
          */
         function renderArchiveView() {
+            if (!archiveContainer) return;
             archiveContainer.innerHTML = '';
             
             const grouped = allPlanillas.reduce((acc, p) => {
                 try {
-                    // Usamos la fecha de envío (trabajo) para el archivo
-                    const date = new Date(p.fechaEnvio + 'T00:00:00'); 
-                    if (isNaN(date)) throw new Error("Invalid date");
-                    const year = date.getUTCFullYear().toString();
-                    const month = monthNames[date.getUTCMonth()];
+                    // NUEVO: Agrupar por fechaPlanilla (YYYY-MM)
+                    const planillaYm = p.fechaPlanilla; // "2025-08"
+                    if (!planillaYm || planillaYm.length !== 7) throw new Error("Invalid fechaPlanilla");
+                    
+                    const [year, monthNum] = planillaYm.split('-'); // ["2025", "08"]
+                    const monthKey = `${monthNum}-${monthNamesShort[parseInt(monthNum) - 1]}`; // "08-Ago"
                     
                     if (!acc[year]) acc[year] = {};
-                    if (!acc[year][month]) acc[year][month] = [];
-                    acc[year][month].push(p);
+                    if (!acc[year][monthKey]) acc[year][monthKey] = [];
+                    acc[year][monthKey].push(p);
                 } catch(e) {
-                    console.error("Fecha inválida:", p.fechaEnvio, p.id);
+                    console.error("Fecha de planilla inválida:", p.fechaPlanilla, p.id);
                 }
                 return acc;
             }, {});
@@ -1032,15 +1244,52 @@
                 yearDiv.className = 'year-group';
                 
                 let yearHTML = `<h3 class="text-2xl font-semibold text-white mb-6 border-b border-slate-700 pb-3">${year}</h3>`;
-                // Ordenar meses numéricamente
+                
                 const sortedMonths = Object.keys(grouped[year]).sort(); 
                 
+                // NUEVO: Totales del Año
+                let yearTotalEfectivos = 0;
+                let yearTotalDeducciones = 0;
+                let yearTotalNeto = 0;
+
                 let monthsHTML = '<div class="month-group space-y-8">';
-                for (const month of sortedMonths) {
-                    const monthName = month.substring(3); // Solo el nombre del mes
+                for (const monthKey of sortedMonths) {
+                    const monthName = monthKey.substring(3); // "Ago"
+                    
+                    // NUEVO: Totales del Mes
+                    let monthTotalEfectivos = 0;
+                    let monthTotalDeducciones = 0;
+                    let monthTotalNeto = 0;
+                    
+                    const planillasMes = grouped[year][monthKey];
+                    
+                    planillasMes.forEach(p => {
+                         if (p.detalleMonetario && p.detalleMonetario.length > 0) {
+                            p.detalleMonetario.forEach(d => {
+                                monthTotalEfectivos += parseFloat(d.efectivos) || 0;
+                                monthTotalDeducciones += parseFloat(d.deducciones) || 0;
+                                monthTotalNeto += parseFloat(d.neto) || 0;
+                            });
+                        }
+                    });
+                    
+                    yearTotalEfectivos += monthTotalEfectivos;
+                    yearTotalDeducciones += monthTotalDeducciones;
+                    yearTotalNeto += monthTotalNeto;
+
                     monthsHTML += `
                         <div>
-                            <h4 class="text-xl font-medium text-indigo-300 mb-4" data-month-key="${monthName}">${monthName}</h4>
+                            <div class="flex justify-between items-baseline mb-4">
+                                <h4 class="text-xl font-medium text-indigo-300" data-month-key="${monthName}">${monthName} (${year})</h4>
+                                <!-- Total del Mes -->
+                                <div class="text-right">
+                                    <span class="text-sm text-neutral-400">Total Mes: </span>
+                                    <span class="text-lg font-bold text-green-400">${formatMoney(monthTotalNeto)}</span>
+                                    <div class="text-xs text-neutral-500">
+                                        (Efect: ${monthTotalEfectivos} / Deduc: ${formatMoney(monthTotalDeducciones)})
+                                    </div>
+                                </div>
+                            </div>
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <!-- Contenedor para tarjetas de este mes -->
                             </div>
@@ -1048,29 +1297,183 @@
                     `;
                 }
                 monthsHTML += '</div>';
-                yearDiv.innerHTML = yearHTML + monthsHTML;
                 
+                // NUEVO: HTML para el Total del Año
+                const yearTotalHTML = `
+                    <div class="mt-12 pt-6 border-t-2 border-indigo-500 bg-slate-800 p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-white mb-4">Resumen Total del Año ${year}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div>
+                                <span class="block text-sm text-neutral-400">Total Efectivos</span>
+                                <span class="block text-2xl font-bold text-white">${yearTotalEfectivos}</span>
+                            </div>
+                            <div>
+                                <span class="block text-sm text-neutral-400">Total Deducciones</span>
+                                <span class="block text-2xl font-bold text-red-400">${formatMoney(yearTotalDeducciones)}</span>
+                            </div>
+                            <div>
+                                <span class="block text-sm text-neutral-400">Total Neto Pagado</span>
+                                <span class="block text-2xl font-bold text-green-400">${formatMoney(yearTotalNeto)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                yearDiv.innerHTML = yearHTML + monthsHTML + yearTotalHTML;
                 archiveContainer.appendChild(yearDiv);
 
-                for (const month of sortedMonths) {
-                    const monthName = month.substring(3);
+                // Renderizar las tarjetas
+                for (const monthKey of sortedMonths) {
+                    const monthName = monthKey.substring(3);
                     const cardContainer = yearDiv.querySelector(`h4[data-month-key="${monthName}"] + div.grid`);
                     
                     if (cardContainer) {
                         // Ordenar planillas dentro del mes por fecha de envío descendente
-                        grouped[year][month].sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
-                        grouped[year][month].forEach(p => renderPlanillaCard(p, cardContainer));
+                        grouped[year][monthKey].sort((a, b) => new Date(b.fechaEnvio) - new Date(a.fechaEnvio));
+                        grouped[year][monthKey].forEach(p => renderPlanillaCard(p, cardContainer));
                     }
                 }
             }
             feather.replace();
         }
+        
+        /**
+         * NUEVO: Renderiza la vista de Reportes por Objeto de Gasto.
+         */
+        function renderReportsView() {
+            if (!reportsTableBody) return;
+            reportsTableBody.innerHTML = '';
+            
+            const stats = {};
+            objetoGastoOptions.forEach(gasto => {
+                stats[gasto] = { pagado: 0, pendiente: 0, total: 0 };
+            });
+            // Añadir "Otro" para datos que no coincidan (aunque no debería haber)
+            stats["Otro"] = { pagado: 0, pendiente: 0, total: 0 };
+
+            let granTotalPagado = 0;
+            let granTotalPendiente = 0;
+            let granTotalNeto = 0;
+
+            allPlanillas.forEach(p => {
+                let totalNetoPlanilla = 0;
+                if (p.detalleMonetario && p.detalleMonetario.length > 0) {
+                    p.detalleMonetario.forEach(d => {
+                        totalNetoPlanilla += parseFloat(d.neto) || 0;
+                    });
+                }
+                
+                const gastoKey = stats[p.objetoGasto] ? p.objetoGasto : "Otro";
+                
+                if (p.checkPagado) {
+                    stats[gastoKey].pagado += totalNetoPlanilla;
+                } else {
+                    stats[gastoKey].pendiente += totalNetoPlanilla;
+                }
+                stats[gastoKey].total += totalNetoPlanilla;
+            });
+
+            // Limpiar "Otro" si está vacío
+            if (stats["Otro"].total === 0) delete stats["Otro"];
+
+            for (const gasto in stats) {
+                const s = stats[gasto];
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-slate-700/50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">${gasto}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400 text-right">${formatMoney(s.pagado)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-400 text-right">${formatMoney(s.pendiente)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-300 text-right">${formatMoney(s.total)}</td>
+                `;
+                reportsTableBody.appendChild(row);
+
+                granTotalPagado += s.pagado;
+                granTotalPendiente += s.pendiente;
+                granTotalNeto += s.total;
+            }
+            
+            // Llenar totales del footer
+            document.getElementById('reportTotalPagado').textContent = formatMoney(granTotalPagado);
+            document.getElementById('reportTotalPendiente').textContent = formatMoney(granTotalPendiente);
+            document.getElementById('reportTotalNeto').textContent = formatMoney(granTotalNeto);
+        }
+
+        /**
+         * NUEVO: Renderiza la vista del Dashboard (Resumen Anual).
+         */
+        function renderDashboardView() {
+            if (!dashboardContainer) return;
+            
+            const yearSelect = document.getElementById('dashboardYearSelect');
+            const calendarGrid = document.getElementById('calendar-grid');
+            const years = [...new Set(allPlanillas.map(p => p.fechaPlanilla ? p.fechaPlanilla.substring(0, 4) : new Date().getFullYear().toString()).filter(Boolean))].sort().reverse();
+            
+            if (years.length === 0) {
+                 years.push(new Date().getFullYear().toString());
+            }
+
+            // Llenar el selector de año
+            const currentYearSelection = yearSelect.value || years[0];
+            yearSelect.innerHTML = years.map(y => `<option value="${y}" ${y === currentYearSelection ? 'selected' : ''}>${y}</option>`).join('');
+            yearSelect.value = currentYearSelection; // Asegurar que el valor esté seleccionado
+            
+            calendarGrid.innerHTML = '';
+            
+            // Agrupar datos por mes para el año seleccionado
+            const yearData = {};
+            monthNamesShort.forEach(m => {
+                yearData[m] = { count: 0, efectivos: 0, neto: 0 };
+            });
+
+            allPlanillas.forEach(p => {
+                if (p.fechaPlanilla && p.fechaPlanilla.startsWith(currentYearSelection)) {
+                    const monthIndex = parseInt(p.fechaPlanilla.split('-')[1]) - 1;
+                    const monthName = monthNamesShort[monthIndex];
+                    
+                    if (yearData[monthName]) {
+                        yearData[monthName].count++;
+                        if (p.detalleMonetario) {
+                            p.detalleMonetario.forEach(d => {
+                                yearData[monthName].efectivos += parseFloat(d.efectivos) || 0;
+                                yearData[monthName].neto += parseFloat(d.neto) || 0;
+                            });
+                        }
+                    }
+                }
+            });
+
+            // Renderizar los 12 meses
+            for (const monthName in yearData) {
+                const data = yearData[monthName];
+                const monthCard = document.createElement('div');
+                monthCard.className = 'calendar-month bg-slate-800 p-4 rounded-lg border border-slate-700 shadow-lg';
+                monthCard.innerHTML = `
+                    <h3 class="text-lg font-semibold text-indigo-300 mb-3">${monthName}</h3>
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-xs text-neutral-400">Total Neto:</span>
+                            <p class="text-lg font-bold ${data.neto > 0 ? 'text-green-400' : 'text-neutral-500'}">${formatMoney(data.neto)}</p>
+                        </div>
+                        <div>
+                            <span class="text-xs text-neutral-400">Total Efectivos:</span>
+                            <p class="text-md font-medium ${data.efectivos > 0 ? 'text-white' : 'text-neutral-500'}">${data.efectivos} pers.</p>
+                        </div>
+                         <div>
+                            <span class="text-xs text-neutral-400">Registros:</span>
+                            <p class="text-md font-medium ${data.count > 0 ? 'text-white' : 'text-neutral-500'}">${data.count}</p>
+                        </div>
+                    </div>
+                `;
+                calendarGrid.appendChild(monthCard);
+            }
+        }
+
 
         // --- Funciones de Formulario (Agregar/Editar) ---
 
         /**
          * Prepara el formulario para editar un registro existente.
-         * ¡CORREGIDO!
          */
         function prepareFormForEdit(registroId) {
             const registro = allPlanillas.find(p => p.id === registroId);
@@ -1116,7 +1519,7 @@
                  faCategoriesSection.classList.add('hidden');
             }
             
-            // 6. CAMBIO: Checkboxes de Pagos -> Radio Buttons
+            // 6. Checkboxes de Pagos -> Radio Buttons
             if (registro.checkPagado) {
                 document.getElementById('radioPagado').checked = true;
             } else {
@@ -1159,7 +1562,7 @@
             createDetalleMonetarioLine(); // Dejar una línea vacía por defecto
             updateTotalNeto();
             
-            // CAMBIO: Default a "No Pagado"
+            // Default a "No Pagado"
             document.getElementById('radioNoPagado').checked = true;
 
             formTitle.textContent = 'Agregar Nuevo Registro';
@@ -1191,6 +1594,8 @@
             const detailLines = detalleMonetarioContainer.querySelectorAll('.detalle-linea');
             detailLines.forEach(line => {
                 const ue = line.querySelector('.input-ue').value;
+                // NUEVO: Capturar Categoría
+                const categoriaMonto = line.querySelector('.input-categoria').value;
                 const efectivos = parseFloat(line.querySelector('.input-efectivos').value) || 0;
                 
                 // Reemplazar comas para almacenar como número puro
@@ -1201,6 +1606,7 @@
                 if (ue) { // Solo guarda líneas con una UE seleccionada
                     detalleMonetario.push({
                         ue: ue,
+                        categoriaMonto: categoriaMonto, // Guardar
                         efectivos: efectivos,
                         total: total,
                         deducciones: deducciones,
@@ -1209,9 +1615,20 @@
                 }
             });
 
-            // CAMBIO: Capturar valor de Radio Button
+            // Capturar valor de Radio Button
             const estadoPagoRadio = document.querySelector('input[name="estadoPago"]:checked');
-            const checkPagado = estadoPagoRadio ? estadoPagoRadio.value === 'pagado' : false;
+            let checkPagado = estadoPagoRadio ? estadoPagoRadio.value === 'pagado' : false;
+
+            // NUEVO: Lógica de Auto-Pagado
+            const expPresupuesto = checkPresupuesto.checked ? (formData.get('expedientePresupuesto') || "S/N") : null;
+            const fechaPresupuesto = checkPresupuesto.checked ? (formData.get('fechaEnvioPresupuesto') || null) : null;
+            
+            const expSecretaria = checkSecretaria.checked ? (formData.get('expedienteSecretaria') || "S/N") : null;
+            const fechaSecretaria = checkSecretaria.checked ? (formData.get('fechaEnvioSecretaria') || null) : null;
+
+            if (expPresupuesto && expSecretaria) {
+                checkPagado = true;
+            }
 
             const registroData = {
                 // Fechas Clave
@@ -1231,11 +1648,10 @@
                 observacionesPersonal: formData.get('observacionesPersonal') || null,
 
                 // Seguimiento de Remisiones
-                fechaEnvioPresupuesto: checkPresupuesto.checked ? formData.get('fechaEnvioPresupuesto') : null,
-                expedientePresupuesto: checkPresupuesto.checked ? formData.get('expedientePresupuesto') : null,
-                
-                fechaEnvioSecretaria: checkSecretaria.checked ? formData.get('fechaEnvioSecretaria') : null,
-                expedienteSecretaria: checkSecretaria.checked ? formData.get('expedienteSecretaria') : null,
+                fechaEnvioPresupuesto: fechaPresupuesto,
+                expedientePresupuesto: expPresupuesto,
+                fechaEnvioSecretaria: fechaSecretaria,
+                expedienteSecretaria: expSecretaria,
                 
                 // Control Monetario Dinámico
                 detalleMonetario: detalleMonetario,
@@ -1261,57 +1677,77 @@
         
         // --- Funciones de Autenticación y Carga ---
         
-        function initializeFirebase() {
+        /**
+         * Inicializa Firebase y maneja la autenticación.
+         */
+        async function initializeFirebase() {
             try {
-                const loginScreen = document.getElementById('login-screen');
-                const mainApp = document.getElementById('main-app');
-                const userPhoto = document.getElementById('user-photo');
-                const userName = document.getElementById('user-name');
-                const userEmail = document.getElementById('user-email');
-                const loginError = document.getElementById('login-error');
-
+                // VALIDACIÓN: Comprobar que la config no tenga los placeholders
+                if (firebaseConfig.apiKey === "TU_API_KEY_VA_AQUI" || !firebaseConfig.apiKey) {
+                    loginError.textContent = "Error: Configuración de Firebase no encontrada.";
+                    console.error("Configuración de Firebase no válida. Revisa el script.");
+                    return;
+                }
+                
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
                 provider = new GoogleAuthProvider();
                 setLogLevel('Debug');
                 
+                appIdDisplay.textContent = appId;
+                
                 // Crear primera línea de detalle monetario
                 createDetalleMonetarioLine();
 
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
+                        // Usuario de Google Autenticado
                         userId = user.uid;
                         userPhoto.src = user.photoURL || 'https://placehold.co/40x40/606060/FFFFFF?text=?';
                         userName.textContent = user.displayName || 'Usuario';
                         userEmail.textContent = user.email;
-                        collectionPath = `planillas/${userId}/registros`;
+                        
+                        // USA LA RUTA PÚBLICA (Colaborativa) - CORREGIDA
+                        // La ruta debe tener un número impar de segmentos (3 segmentos)
+                        collectionPath = `artifacts/${appId}/planillas`; // <-- ESTA ES LA NUEVA RUTA PÚBLICA
                         
                         mainApp.classList.remove('hidden');
                         loginScreen.classList.add('hidden');
                         loginError.textContent = '';
                         
                         setupSnapshotListener();
+                        
+                    } else if (initialAuthToken) {
+                        // Usuario de Entorno de Desarrollo (Token)
+                        signInWithCustomToken(auth, initialAuthToken).catch(err => {
+                             console.error("Error con Custom Token, intentando anónimo:", err);
+                             signInAnonymously(auth); // Fallback a anónimo
+                        });
                     } else {
+                         // Fallback a Anónimo (si Google Auth falla o no es el flujo)
+                         // Oculta la app principal y muestra el login
                         userId = null;
                         if (unsubscribe) unsubscribe();
                         mainApp.classList.add('hidden');
                         loginScreen.classList.remove('hidden');
                     }
                 });
+
             } catch (error) {
                 console.error("Error al inicializar Firebase:", error);
-                document.getElementById('login-error').textContent = "Error al conectar con Firebase.";
+                loginError.textContent = "Error al conectar con Firebase.";
             }
         }
 
         async function handleLogin() {
             try {
-                document.getElementById('login-error').textContent = '';
+                loginError.textContent = '';
                 await signInWithPopup(auth, provider);
+                // onAuthStateChanged se encargará del resto
             } catch (error) {
                 console.error("Error al iniciar sesión:", error);
-                document.getElementById('login-error').textContent = "Error al iniciar sesión. Intenta de nuevo.";
+                loginError.textContent = "Error al iniciar sesión. Intenta de nuevo.";
             }
         }
 
@@ -1333,7 +1769,7 @@
             if (target && target.classList.contains('edit-btn')) {
                 e.preventDefault();
                 e.stopPropagation();
-                prepareFormForEdit(target.dataset.id); // ¡Llamada corregida!
+                prepareFormForEdit(target.dataset.id); 
             } else if (target && target.classList.contains('delete-btn')) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1344,7 +1780,13 @@
         async function handleDeleteClick(docId) {
             if (!userId) return; 
 
-            if (await showDeleteConfirmation()) {
+            if (await showCustomConfirmation({
+                title: 'Confirmar Eliminación',
+                message: '¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.',
+                confirmText: 'Eliminar',
+                confirmColor: 'bg-red-600',
+                confirmHover: 'hover:bg-red-700'
+            })) {
                 try {
                     await deleteDoc(doc(db, collectionPath, docId));
                 } catch (error) {
@@ -1353,25 +1795,46 @@
             }
         }
 
-        function showDeleteConfirmation() {
+        /**
+         * Muestra un modal de confirmación genérico.
+         * @param {object} options - { title, message, confirmText, confirmColor, confirmHover }
+         */
+        function showCustomConfirmation(options) {
             return new Promise((resolve) => {
                 const modalOverlay = document.getElementById('customModal');
-                document.getElementById('modal-title').textContent = 'Confirmar Eliminación';
-                document.getElementById('modal-message').textContent = '¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.';
+                document.getElementById('modal-title').textContent = options.title;
+                document.getElementById('modal-message').textContent = options.message;
+                
+                const confirmBtn = document.getElementById('modal-confirm');
+                confirmBtn.textContent = options.confirmText;
+                
+                // Limpiar clases de color antiguas
+                confirmBtn.className = confirmBtn.className.replace(/bg-\w+-\d+/g, '').replace(/hover:bg-\w+-\d+/g, '');
+                // Añadir nuevas clases de color
+                confirmBtn.classList.add(options.confirmColor, options.confirmHover);
                 
                 modalOverlay.classList.remove('hidden');
                 modalOverlay.classList.add('flex');
 
-                document.getElementById('modal-confirm').onclick = () => {
+                const onConfirm = () => {
                     modalOverlay.classList.add('hidden');
                     modalOverlay.classList.remove('flex');
+                    confirmBtn.removeEventListener('click', onConfirm);
+                    cancelBtn.removeEventListener('click', onCancel);
                     resolve(true);
                 };
-                document.getElementById('modal-cancel').onclick = () => {
+                
+                const onCancel = () => {
                     modalOverlay.classList.add('hidden');
                     modalOverlay.classList.remove('flex');
+                    confirmBtn.removeEventListener('click', onConfirm);
+                    cancelBtn.removeEventListener('click', onCancel);
                     resolve(false);
                 };
+
+                const cancelBtn = document.getElementById('modal-cancel');
+                confirmBtn.addEventListener('click', onConfirm, { once: true });
+                cancelBtn.addEventListener('click', onCancel, { once: true });
             });
         }
         
@@ -1384,6 +1847,103 @@
                 faUeIncludesInputs.forEach(input => input.checked = false);
             }
         }
+        
+        // --- LÓGICA DE MIGRACIÓN (v10.4) ---
+        
+        async function handleMigration() {
+            if (!userId || !db) return;
+            
+            // 1. Mostrar loader en el botón
+            migrateButton.disabled = true;
+            migrateButtonText.textContent = 'Migrando...';
+            migrateLoader.classList.remove('hidden');
+            
+            // 2. Definir rutas (corregidas)
+            // RUTA ANTIGUA (PRIVADA): Donde están tus datos AHORA.
+            // OJO: La estructura original era 'planillas' (colección) -> '{userId}' (documento) -> 'registros' (sub-colección)
+            // Las reglas `match /planillas/{userId}/{document=**}` permiten esto.
+            const privateCollectionPath = `planillas/${userId}/registros`;
+            const privateCollectionRef = collection(db, privateCollectionPath);
+            
+            // RUTA NUEVA (PÚBLICA): Donde queremos copiar los datos.
+            // Esta ruta (collectionPath) ya está definida globalmente
+            const publicCollectionRef = collection(db, collectionPath);
+            
+            // 3. Confirmación
+            const confirmed = await showCustomConfirmation({
+                title: 'Confirmar Migración',
+                message: 'Esto copiará TODOS sus registros privados a la base de datos compartida. Esta acción solo debe hacerse UNA VEZ. ¿Desea continuar?',
+                confirmText: 'Confirmar Migración',
+                confirmColor: 'bg-yellow-600',
+                confirmHover: 'hover:bg-yellow-700'
+            });
+            
+            if (!confirmed) {
+                migrateButton.disabled = false;
+                migrateButtonText.textContent = 'Migrar Datos Privados';
+                migrateLoader.classList.add('hidden');
+                return;
+            }
+            
+            try {
+                // 4. Leer los datos antiguos
+                const privateDocsSnapshot = await getDocs(privateCollectionRef);
+                
+                if (privateDocsSnapshot.empty) {
+                    await showCustomConfirmation({
+                        title: 'Migración No Necesaria',
+                        message: 'No se encontraron datos en su antigua carpeta privada. Es posible que ya se hayan migrado o no existan.',
+                        confirmText: 'Aceptar',
+                        confirmColor: 'bg-indigo-600',
+                        confirmHover: 'hover:bg-indigo-700'
+                    });
+                    migrationContainer.classList.add('hidden'); // Ocultar el botón
+                    return;
+                }
+                
+                // 5. Escribir en la nueva ubicación (batch)
+                const batch = writeBatch(db);
+                let count = 0;
+                
+                privateDocsSnapshot.forEach((privateDoc) => {
+                    const privateData = privateDoc.data();
+                    // Usar setDoc(doc()) para mantener los IDs originales si es necesario, 
+                    // o addDoc() para nuevos IDs. Usar setDoc es más seguro para una copia 1:1.
+                    const newPublicDocRef = doc(publicCollectionRef, privateDoc.id);
+                    batch.set(newPublicDocRef, privateData);
+                    count++;
+                });
+                
+                await batch.commit();
+                
+                // 6. Mostrar éxito y ocultar botón
+                await showCustomConfirmation({
+                    title: 'Migración Exitosa',
+                    message: `¡Éxito! Se copiaron ${count} registros a la base de datos compartida. Los datos ahora aparecerán para todos.`,
+                    confirmText: 'Aceptar',
+                    confirmColor: 'bg-green-600',
+                    confirmHover: 'hover:bg-green-700'
+                });
+                
+                migrationContainer.classList.add('hidden'); // Ocultar permanentemente
+                
+            } catch (error) {
+                console.error("Error durante la migración:", error);
+                await showCustomConfirmation({
+                    title: 'Error de Migración',
+                    message: `Ocurrió un error. Es posible que las reglas de Firebase no estén actualizadas. Error: ${error.message}`,
+                    confirmText: 'Cerrar',
+                    confirmColor: 'bg-red-600',
+                    confirmHover: 'hover:bg-red-700'
+                });
+            } finally {
+                // 7. Resetear el botón en caso de fallo no fatal
+                migrateButton.disabled = false;
+                migrateButtonText.textContent = 'Migrar Datos Privados';
+                migrateLoader.classList.add('hidden');
+            }
+        }
+
 
         // Asignación de Eventos al cargar el script
         window.onload = function() {
@@ -1391,8 +1951,8 @@
             feather.replace();
 
             // Formulario y Filtros
-            document.getElementById('login-button').addEventListener('click', handleLogin);
-            document.getElementById('logout-button').addEventListener('click', handleLogout);
+            loginButton.addEventListener('click', handleLogin);
+            logoutButton.addEventListener('click', handleLogout);
             navLinks.forEach(link => link.addEventListener('click', handleNavClick));
             addForm.addEventListener('submit', handleAddFormSubmit);
             cancelEditButton.addEventListener('click', (e) => { e.preventDefault(); resetForm(); handleNavClick({ preventDefault: () => {}, currentTarget: document.querySelector('a[data-view="view-dashboard"]') }); });
@@ -1405,12 +1965,17 @@
             // Eventos de Control Monetario Dinámico
             addDetalleBtn.addEventListener('click', () => createDetalleMonetarioLine());
 
-            // Delegación de eventos de la vista principal y archivo (¡Corregido!)
+            // Delegación de eventos de la vista principal y archivo
             planillasContainer.addEventListener('click', handleCardActionClick);
             archiveContainer.addEventListener('click', handleCardActionClick);
             
+            // Eventos de Filtro y Dashboard
             document.getElementById('filterButton').addEventListener('click', (e) => { e.preventDefault(); renderPlanillas(); });
             document.getElementById('clearFilterButton').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('filterForm').reset(); renderPlanillas(); });
+            document.getElementById('dashboardYearSelect').addEventListener('change', renderDashboardView);
+            
+            // Evento de Migración
+            migrateButton.addEventListener('click', handleMigration);
         };
     </script>
 </body>
