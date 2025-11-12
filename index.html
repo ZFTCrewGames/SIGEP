@@ -62,6 +62,10 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
+        .rotate-90 {
+            transform: rotate(90deg);
+        }
+        
         /* Estilo para tachar un elemento pagado */
         .paid-indicator:before {
             content: " ";
@@ -1346,31 +1350,58 @@
             
             const stats = {};
             objetoGastoOptions.forEach(gasto => {
-                stats[gasto] = { pagado: 0, pendiente: 0, total: 0 };
+                stats[gasto] = { 
+                    pagado: 0, pendiente: 0, total: 0,
+                    categorias: {
+                        "general": { pagado: 0, pendiente: 0, total: 0 },
+                        "bajas": { pagado: 0, pendiente: 0, total: 0 },
+                        "cambio_categoria": { pagado: 0, pendiente: 0, total: 0 }
+                    }
+                };
             });
-            // Añadir "Otro" para datos que no coincidan (aunque no debería haber)
-            stats["Otro"] = { pagado: 0, pendiente: 0, total: 0 };
+            // Añadir "Otro" para datos que no coincidan
+            stats["Otro"] = { 
+                pagado: 0, pendiente: 0, total: 0,
+                categorias: {
+                    "general": { pagado: 0, pendiente: 0, total: 0 },
+                    "bajas": { pagado: 0, pendiente: 0, total: 0 },
+                    "cambio_categoria": { pagado: 0, pendiente: 0, total: 0 }
+                }
+            };
 
             let granTotalPagado = 0;
             let granTotalPendiente = 0;
             let granTotalNeto = 0;
 
             allPlanillas.forEach(p => {
-                let totalNetoPlanilla = 0;
+                const gastoKey = stats[p.objetoGasto] ? p.objetoGasto : "Otro";
+                const isPagado = p.checkPagado;
+
                 if (p.detalleMonetario && p.detalleMonetario.length > 0) {
                     p.detalleMonetario.forEach(d => {
-                        totalNetoPlanilla += parseFloat(d.neto) || 0;
+                        const neto = parseFloat(d.neto) || 0;
+                        // Usar "general" como fallback si categoriaMonto no existe
+                        const categoriaKey = d.categoriaMonto || "general"; 
+
+                        // 1. Acumular en el total del Objeto de Gasto
+                        if (isPagado) {
+                            stats[gastoKey].pagado += neto;
+                        } else {
+                            stats[gastoKey].pendiente += neto;
+                        }
+                        stats[gastoKey].total += neto;
+
+                        // 2. Acumular en la sub-categoría
+                        if (stats[gastoKey].categorias[categoriaKey]) {
+                            if (isPagado) {
+                                stats[gastoKey].categorias[categoriaKey].pagado += neto;
+                            } else {
+                                stats[gastoKey].categorias[categoriaKey].pendiente += neto;
+                            }
+                            stats[gastoKey].categorias[categoriaKey].total += neto;
+                        }
                     });
                 }
-                
-                const gastoKey = stats[p.objetoGasto] ? p.objetoGasto : "Otro";
-                
-                if (p.checkPagado) {
-                    stats[gastoKey].pagado += totalNetoPlanilla;
-                } else {
-                    stats[gastoKey].pendiente += totalNetoPlanilla;
-                }
-                stats[gastoKey].total += totalNetoPlanilla;
             });
 
             // Limpiar "Otro" si está vacío
@@ -1378,15 +1409,44 @@
 
             for (const gasto in stats) {
                 const s = stats[gasto];
+                
+                // Omitir "Otro" si está vacío y no tiene datos
+                if (gasto === "Otro" && s.total === 0) continue;
+
                 const row = document.createElement('tr');
-                row.className = 'hover:bg-slate-700/50';
+                // Añadir clases para el toggle
+                row.className = 'hover:bg-slate-700/50 cursor-pointer reporte-gasto-fila';
+                row.setAttribute('data-gasto', gasto);
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">${gasto}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                        <i data-feather="chevron-right" class="feather-chevron-right w-4 h-4 inline-block mr-2 transition-transform duration-200"></i>
+                        ${gasto}
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400 text-right">${formatMoney(s.pagado)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-400 text-right">${formatMoney(s.pendiente)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-300 text-right">${formatMoney(s.total)}</td>
                 `;
                 reportsTableBody.appendChild(row);
+                
+                // Añadir las filas de detalle (ocultas)
+                for (const catKey in s.categorias) {
+                    const catData = s.categorias[catKey];
+                    if (catData.total > 0) { // Solo mostrar si hay datos
+                        const detalleRow = document.createElement('tr');
+                        detalleRow.className = `reporte-detalle-fila hidden bg-slate-800/50`;
+                        detalleRow.setAttribute('data-parent-gasto', gasto);
+                        
+                        detalleRow.innerHTML = `
+                            <td class="pl-12 pr-6 py-3 whitespace-nowrap text-sm text-neutral-400">
+                                └ ${categoriaMontoOptions[catKey]}
+                            </td>
+                            <td class="px-6 py-3 whitespace-nowrap text-sm text-green-400/80 text-right">${formatMoney(catData.pagado)}</td>
+                            <td class="px-6 py-3 whitespace-nowrap text-sm text-yellow-400/80 text-right">${formatMoney(catData.pendiente)}</td>
+                            <td class="px-6 py-3 whitespace-nowrap text-sm text-neutral-400/80 text-right">${formatMoney(catData.total)}</td>
+                        `;
+                        reportsTableBody.appendChild(detalleRow);
+                    }
+                }
 
                 granTotalPagado += s.pagado;
                 granTotalPendiente += s.pendiente;
@@ -1397,6 +1457,9 @@
             document.getElementById('reportTotalPagado').textContent = formatMoney(granTotalPagado);
             document.getElementById('reportTotalPendiente').textContent = formatMoney(granTotalPendiente);
             document.getElementById('reportTotalNeto').textContent = formatMoney(granTotalNeto);
+            
+            // Renderizar los iconos de chevron
+            feather.replace();
         }
 
         /**
@@ -1976,6 +2039,25 @@
             
             // Evento de Migración
             migrateButton.addEventListener('click', handleMigration);
+            
+            // NUEVO: Evento para desplegar reportes
+            reportsTableBody.addEventListener('click', (e) => {
+                const filaGasto = e.target.closest('.reporte-gasto-fila');
+                if (filaGasto) {
+                    const gasto = filaGasto.dataset.gasto;
+                    const detalleFilas = reportsTableBody.querySelectorAll(`.reporte-detalle-fila[data-parent-gasto="${gasto}"]`);
+                    // Seleccionar el SVG por la clase que le dimos
+                    const icon = filaGasto.querySelector('.feather-chevron-right'); 
+                    
+                    detalleFilas.forEach(fila => {
+                        fila.classList.toggle('hidden');
+                    });
+                    
+                    if (icon) {
+                        icon.classList.toggle('rotate-90');
+                    }
+                }
+            });
         };
     </script>
 </body>
